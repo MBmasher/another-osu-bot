@@ -1,9 +1,10 @@
 import discord
 import recent
 import random
+from boto.s3.connection import S3Connection
 
-key = input("Type your osu API key. ")
-fin = open('keys.cfg', 'r+')
+s3 = S3Connection(os.environ['S3_KEY'], os.environ['S3_SECRET'])
+
 fin.write("[osu]\napi_key = {}".format(key))
 fin.close()
 
@@ -258,4 +259,5 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-client.run(TOKEN)
+def main():
+    client.run(TOKEN)
