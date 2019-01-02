@@ -264,7 +264,7 @@ def return_recent(user, best, number, last_beatmap):
     ]
 
     if best == 0:
-        tries = 0
+        tries = 1
         for i in range(49):
             if i < number:
                 continue
