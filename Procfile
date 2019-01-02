@@ -1,1 +1,2 @@
-worker: python main.py
+web: gunicorn main:main
+heroku ps:scale web=1
