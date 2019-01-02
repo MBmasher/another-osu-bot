@@ -3,25 +3,18 @@ import recent
 import random
 import os
 
+key = os.environ.get('API_KEY')
+TOKEN = os.environ.get('TOKEN')
+
+fin = open('keys.cfg', 'r+')
+fin.truncate(0)
+fin.seek(0)
+fin.write("[osu]\napi_key = {}".format(key))
+fin.close()
+
 client = discord.Client()
 
-def main(key, TOKEN):
-    global client, last_beatmap
-
-    #key = os.environ.get('API_KEY')
-    #TOKEN = os.environ.get('TOKEN')
-
-    fin = open('keys.cfg', 'r+')
-    fin.truncate(0)
-    fin.seek(0)
-    fin.write("[osu]\napi_key = {}".format(key))
-    fin.close()
-
-    client = discord.Client()
-
-    last_beatmap = 0
-
-    client.run(TOKEN)
+last_beatmap = 0
 
 @client.event
 async def on_message(message):
@@ -276,3 +269,5 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+
+client.run(TOKEN)
