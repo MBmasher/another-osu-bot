@@ -8,6 +8,8 @@ def main(key, TOKEN):
     #TOKEN = os.environ.get('TOKEN')
 
     fin = open('keys.cfg', 'r+')
+    fin.truncate(0)
+    fin.seek(0)
     fin.write("[osu]\napi_key = {}".format(key))
     fin.close()
 
