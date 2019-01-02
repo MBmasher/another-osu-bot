@@ -1,6 +1,3 @@
 discord
-re
-json
 requests
 configparser
-datetime
