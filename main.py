@@ -3,9 +3,9 @@ import recent
 import random
 import os
 
-def main():
-    key = os.environ.get('API_KEY')
-    TOKEN = os.environ.get('TOKEN')
+def main(key, TOKEN):
+    #key = os.environ.get('API_KEY')
+    #TOKEN = os.environ.get('TOKEN')
 
     fin = open('keys.cfg', 'r+')
     fin.write("[osu]\napi_key = {}".format(key))
