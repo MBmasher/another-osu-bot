@@ -260,8 +260,22 @@ def return_recent(user, best, number, last_beatmap):
         "**Hits:** {} / {} / {} / {}".format(c300, c100, c50, misses),
         "**Combo:** {}/{}x".format(combo, max_combo),
         "**Performance:** __{:.2f}pp__{} /{} SS {:.2f}pp".format(final_pp, top_score_string, fc_string, max_pp.pp),
-        "**When:** {}".format(time_ago)
+        "**When:** {}".format(time_ago),
     ]
+
+    if best == 0:
+        tries = 0
+        for i in range(49):
+            if i < number:
+                continue
+            if play_info[i][0][1] == str(b_id) and play_info[i][10][1] == str(mods):
+                tries += 1
+            else:
+                break
+        if tries >= 49:
+            play_info_list.append("**Try:** 49+")
+        else:
+            play_info_list.append("**Try:** {}".format(tries))
 
     play_info_s = '\n'.join(play_info_list)
 
