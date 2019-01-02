@@ -207,16 +207,19 @@ async def on_message(message):
 
     if message.content.startswith('~roll'):
         try:
+            number_bool = True
             number = 100
             user_id = message.author.id
             if len(message.content.split(" ")) > 1:
                 if message.content.split(" ")[1].isdigit():
                     number = int(message.content.split(" ")[1])
                 else:
+                    number_bool = False
                     await client.send_message(message.channel, "Are you fucking stupid? That's not a number.")
 
-            await client.send_message(message.channel,
-                                      "<@{}> rolled a {} out of {}.".format(user_id, random.randint(1, number),
+            if number_bool:
+                await client.send_message(message.channel,
+                                          "<@{}> rolled a {} out of {}.".format(user_id, random.randint(1, number),
                                                                             number))
         except Exception as e:
             await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass\n{}".format(e))
