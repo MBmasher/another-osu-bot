@@ -63,6 +63,11 @@ def return_recent(user, best, number, last_beatmap, show_all):
     if best == 3:
         play_info = sorted(play_info, key=get_date, reverse=True)
 
+    if best != 2:
+        b_id = play_info[current_number - 1][0][1]
+    else:
+        b_id = last_beatmap
+
     url = 'https://osu.ppy.sh/api/get_beatmaps?k={}&b={}'.format(key, b_id)
     jsonurl = str(requests.get(url).text)
     jsonurl = jsonurl[2:-2]
@@ -100,11 +105,6 @@ def return_recent(user, best, number, last_beatmap, show_all):
                 time_ago = "{} seconds ago".format(int(s))
 
         print(play_info)
-
-        if best != 2:
-            b_id = play_info[current_number-1][0][1]
-        else:
-            b_id = last_beatmap
 
         mods = int(play_info[current_number-1][10+index_adjust][1])
         time_multiplier = 1
