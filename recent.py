@@ -233,6 +233,7 @@ def return_recent(user, best, number, last_beatmap):
     for i in range(100):
         if leaderboard_info[i][1][1] == str(score) and leaderboard_info[i][2][1] == username:
             rank_string = " __**#{}**__".format(i+1)
+            final_pp = float(play_info[i - 1][14 + index_adjust][1])
             break
 
     url = 'https://osu.ppy.sh/api/get_user_best?k={}&u={}&limit=100'.format(key, user)
