@@ -227,6 +227,7 @@ def return_recent(user, best, number, last_beatmap, show_all):
         ]
 
         current_number += 1
+        repeats += 1
 
         play_info_s += '\n'.join(play_info_list) + "\n\n"
 
