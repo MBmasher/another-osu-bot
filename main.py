@@ -64,8 +64,8 @@ async def on_message(message):
                         emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                         emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
                         await client.send_message(message.channel, embed=emb)
-        except Exception as e:
-            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass\n{}".format(e))
+        except:
+            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
 
     if message.content.startswith('~best') or message.content.startswith('~top'):
         try:
@@ -107,8 +107,8 @@ async def on_message(message):
                         emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                         emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
                         await client.send_message(message.channel, embed=emb)
-        except Exception as e:
-            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass\n{}".format(e))
+        except:
+            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
 
     if message.content.startswith('~compare') or message.content.startswith('~c'):
         try:
@@ -159,8 +159,8 @@ async def on_message(message):
                         emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                         emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
                         await client.send_message(message.channel, embed=emb)
-        except Exception as e:
-            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass\n{}".format(e))
+        except:
+            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass\n{}")
 
     if message.content.startswith('~recentbest') or message.content.startswith('~rb'):
         try:
@@ -202,8 +202,8 @@ async def on_message(message):
                         emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                         emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
                         await client.send_message(message.channel, embed=emb)
-        except Exception as e:
-            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass\n{}".format(e))
+        except:
+            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
 
     if message.content.startswith('~roll'):
         try:
@@ -221,8 +221,8 @@ async def on_message(message):
                 await client.send_message(message.channel,
                                           "<@{}> rolled a {} out of {}.".format(user_id, random.randint(1, number),
                                                                             number))
-        except Exception as e:
-            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass\n{}".format(e))
+        except:
+            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
 
     if message.content.startswith('~link'):
         name = ""

@@ -15,6 +15,8 @@ def get_date(record):
     return datetime.strptime(record[12][1], '%Y-%m-%d %H:%M:%S')
 
 def return_recent(user, best, number, last_beatmap):
+    user = "_".join(user.split(" "))
+
     if user == [0]:
         return 5, 0, 0, 0, 0, 0, 0, 0
 
