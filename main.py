@@ -383,7 +383,7 @@ async def on_ready():
 
 client.run(TOKEN)
 
-loop = asyncio.new_event_loop()
+loop = asyncio.get_event_loop()
 
 async def constant_update():
     while True:
