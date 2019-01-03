@@ -342,9 +342,11 @@ async def on_message(message):
         new_list = []
         if len(message.content.split(" ")) > 1:
             spectate_user = "_".join(message.content.split(" ")[1:])
+            spectated_user = ""
             user_spectated = False
             for spectate_message, user, time_ in spectating_users:
                 if user == spectate_user:
+                    spectated_user = user
                     await client.edit_message(spectate_message, "Stopped spectating {}.".format(user))
                     user_spectated = True
                 else:
@@ -352,7 +354,7 @@ async def on_message(message):
 
             if user_spectated:
                 spectating_users = new_list
-                await client.send_message(message.channel, "Stopped spectating {}".format(user))
+                await client.send_message(message.channel, "Stopped spectating {}".format(spectated_user))
             else:
                 await client.send_message(message.channel, "This user is not already being spectated.")
         else:
