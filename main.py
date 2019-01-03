@@ -325,7 +325,6 @@ async def on_message(message):
                     client.send_message(message.channel, "test")
                     spectate_message = await client.send_message(message.channel, "Spectating {}...".format(spectate_user))
                     spectating_users.append((spectate_message, spectate_user))
-                    await spectate_recent()
             else:
                 await client.send_message(message.channel, "Please specify a user to be spectated.")
 
