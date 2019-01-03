@@ -409,6 +409,7 @@ async def on_message(message):
     if message.content.startswith('~unspectate') or message.content.startswith('~unspec'):
         print(spectating_users)
         new_list = []
+        low_detail_new_list = []
         if len(message.content.split(" ")) > 1:
             spectate_user = "_".join(message.content.split(" ")[1:])
             spectated_user = ""
@@ -427,10 +428,11 @@ async def on_message(message):
                     await client.edit_message(spectate_message, "Stopped spectating {}.".format(user))
                     user_spectated = True
                 else:
-                    new_list.append((spectate_message, user, time_))
+                    low_detail_new_list.append((spectate_message, user, time_))
 
             if user_spectated:
                 spectating_users = new_list
+                low_detail_spectating_users = low_detail_new_list
                 await client.send_message(message.channel, "Stopped spectating {}".format(spectated_user))
             else:
                 await client.send_message(message.channel, "This user is not already being spectated.")
