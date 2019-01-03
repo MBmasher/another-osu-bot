@@ -4,6 +4,7 @@ import random
 import os
 import time
 import asyncio
+import sys
 
 class Periodic:
     def __init__(self, func, time):
@@ -83,6 +84,7 @@ async def on_message(message):
             await client.send_message(message.channel, "Only MBmasher can close the bot.")
         else:
             await client.send_message(message.channel, "Shutting down.")
+            sys.exit(1)
 
     if message.content.startswith('~recent') or message.content.startswith('~rs') or message.content.startswith(
             '~r') and not message.content.startswith('~rb') and not message.content.startswith('~roll'):
