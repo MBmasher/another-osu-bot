@@ -350,7 +350,7 @@ async def on_message(message):
                     await client.edit_message(spectate_message, "Stopped spectating {}.".format(user))
                     user_spectated = True
                 else:
-                    new_list.append((spectate_message, user))
+                    new_list.append((spectate_message, user, time_))
 
             if user_spectated:
                 spectating_users = new_list
