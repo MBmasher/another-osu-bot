@@ -84,8 +84,6 @@ def return_recent(user, best, number, last_beatmap):
         else:
             time_ago = "{} seconds ago".format(int(s))
 
-    print(play_info)
-
     if best != 2:
         b_id = play_info[number-1][0][1]
     else:

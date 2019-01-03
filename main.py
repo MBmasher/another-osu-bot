@@ -2,9 +2,38 @@ import discord
 import recent
 import random
 import os
+from threading import Timer
+from time import sleep
+
+class RepeatedTimer(object):
+    def __init__(self, interval, function, *args, **kwargs):
+        self._timer     = None
+        self.interval   = interval
+        self.function   = function
+        self.args       = args
+        self.kwargs     = kwargs
+        self.is_running = False
+        self.start()
+
+    def _run(self):
+        self.is_running = False
+        self.start()
+        self.function(*self.args, **self.kwargs)
+
+    def start(self):
+        if not self.is_running:
+            self._timer = Timer(self.interval, self._run)
+            self._timer.start()
+            self.is_running = True
+
+    def stop(self):
+        self._timer.cancel()
+        self.is_running = False
 
 key = os.environ.get('API_KEY')
 TOKEN = os.environ.get('TOKEN')
+
+spectating_users = []
 
 fin = open('keys.cfg', 'r+')
 fin.truncate(0)
@@ -16,9 +45,24 @@ client = discord.Client()
 
 last_beatmap = 0
 
+async def spectate_recent():
+    global spectating_users
+
+    for message, user in spectating_users:
+
+        play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
+            user, 0, 1, 0)
+        if play_list != 5:
+            if len(play_list[0]) <= 1:
+                await client.edit_message(message, "Spectating {}...\n{} has no recent plays!".format(user, user))
+            else:
+                emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
+                emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                await client.edit_message(message, "Spectating {}...".format(user), embed=emb)
+
 @client.event
 async def on_message(message):
-    global last_beatmap
+    global last_beatmap, spectating_users
     # we do not want the bot to reply to itself
     if message.author == client.user:
         return
@@ -254,6 +298,45 @@ async def on_message(message):
                                       "<@{}> successfully linked to {}!".format(str(user_id), name))
         fin.close()
 
+    if message.content.startswith('~spectate') or message.content.startswith('~spec'):
+        global spectating_users
+        if len(spectating_users) >= 5:
+            await client.send_message(message.channel, "Cannot spectate more than 5 users.\nCurrent list of spectated users: {}\nUnspectate one of these users if you'd like to spectate a different user.".format(", ".join(spectating_users)))
+        else:
+            if len(message.content.split(" ")) > 1:
+                spectate_user = "_".join(message.content.split(" ")[1:])
+                user_spectated = False
+                for message, user in spectating_users:
+                    if user == spectate_user:
+                        await client.send_message(message.channel, "This user is already being spectated.")
+                        user_spectated = True
+                        break
+                if not user_spectated:
+                    spectating_message = client.send_message(message.channel, "Spectating {}...".format(spectate_user))
+                    spectating_users.append((spectating_message, spectate_user))
+            else:
+                await client.send_message(message.channel, "Please specify a user to be spectated.")
+
+    if message.content.startswith('~unspectate') or message.content.startswith('~unspec'):
+        new_list = []
+        if len(message.content.split(" ")) > 1:
+            spectate_user = "_".join(message.content.split(" ")[1:])
+            user_spectated = False
+            for message, user in spectating_users:
+                if user == spectate_user:
+                    await client.edit_message(message, "This message was originally used to spectate {}.".format(user))
+                    user_spectated = True
+                else:
+                    new_list.append((message, user))
+
+            if user_spectated:
+                spectating_users = new_list
+                await client.send_message(message.channel, "Stopped spectating {}".format(user))
+            else:
+                await client.send_message(message.channel, "This user is not already being spectated.")
+        else:
+            await client.send_message(message.channel, "Please specify a user to be unspectated.")
+
     if (message.content.startswith('!r') or message.content.startswith('!rb') or message.content.startswith(
             '!recent')
             or message.content.startswith('!top') or message.content.startswith(
@@ -285,5 +368,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+
+rt = RepeatedTimer(20, spectate_recent)
 
 client.run(TOKEN)
