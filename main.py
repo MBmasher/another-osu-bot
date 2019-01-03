@@ -281,7 +281,7 @@ async def on_message(message):
         fin.close()
 
     if message.content.startswith('~spectate') or message.content.startswith('~spec'):
-        global spectating_users
+        print(spectating_users)
         if len(spectating_users) >= 5:
             await client.send_message(message.channel, "Cannot spectate more than 5 users.\nCurrent list of spectated users: {}\nUnspectate one of these users if you'd like to spectate a different user.".format(", ".join(spectating_users)))
         else:
@@ -301,6 +301,7 @@ async def on_message(message):
                 await client.send_message(message.channel, "Please specify a user to be spectated.")
 
     if message.content.startswith('~unspectate') or message.content.startswith('~unspec'):
+        print(spectating_users)
         new_list = []
         if len(message.content.split(" ")) > 1:
             spectate_user = "_".join(message.content.split(" ")[1:])
