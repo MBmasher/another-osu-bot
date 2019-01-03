@@ -63,6 +63,13 @@ def return_recent(user, best, number, last_beatmap, show_all):
     if best == 3:
         play_info = sorted(play_info, key=get_date, reverse=True)
 
+    url = 'https://osu.ppy.sh/api/get_beatmaps?k={}&b={}'.format(key, b_id)
+    jsonurl = str(requests.get(url).text)
+    jsonurl = jsonurl[2:-2]
+    beatmap_split = jsonurl.split(",")
+    beatmap_info = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in beatmap_split]
+
+    max_combo = beatmap_info[26][1]
 
     while repeats < max_repeats:
         datetime_rb = datetime.strptime(play_info[current_number-1][12+date_index_adjust][1], '%Y-%m-%d %H:%M:%S')
@@ -223,12 +230,6 @@ def return_recent(user, best, number, last_beatmap, show_all):
 
         play_info_s += '\n'.join(play_info_list) + "\n\n"
 
-    url = 'https://osu.ppy.sh/api/get_beatmaps?k={}&b={}'.format(key, b_id)
-    jsonurl = str(requests.get(url).text)
-    jsonurl = jsonurl[2:-2]
-    beatmap_split = jsonurl.split(",")
-    beatmap_info = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in beatmap_split]
-
     song_length = int(int(beatmap_info[3][1]) / time_multiplier)
     drain_length = int(int(beatmap_info[4][1]) / time_multiplier)
     diff = beatmap_info[5][1]
@@ -240,7 +241,6 @@ def return_recent(user, best, number, last_beatmap, show_all):
     song_title = beatmap_info[15][1]
     mapper = beatmap_info[16][1]
     bpm = int(int(beatmap_info[18][1]) * time_multiplier)
-    max_combo = beatmap_info[26][1]
     star_rating = diff_file[2]
 
     status_num = int(beatmap_info[2][1])
