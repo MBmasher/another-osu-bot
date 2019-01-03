@@ -129,7 +129,7 @@ def stop():
 
 @client.event
 async def on_message(message):
-    global last_beatmap, spectating_users, logging_channel, logging_messag
+    global last_beatmap, spectating_users, logging_channel, logging_message, logging
     # we do not want the bot to reply to itself
     if message.author == client.user:
         return
@@ -439,7 +439,6 @@ async def on_message(message):
 
     if message.content.startswith('~log'):
         logging = True
-        global logging_message
         if logging_message is not None:
             await client.edit_message(logging_message, "Logging stopped/moved.")
             logging_message = await client.send_message(message.channel, "Logging moved to this channel.")
