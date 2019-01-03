@@ -391,4 +391,5 @@ async def constant_update():
         await asyncio.sleep(20, loop=loop)
 
 task = loop.create_task(constant_update())
-loop.run_forever()
+cors = asyncio.wait([on_message(), on_ready()])
+loop.run_until_complete(cors)
