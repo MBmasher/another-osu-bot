@@ -47,7 +47,6 @@ def main(file):
                 dis = math.sqrt(
                     math.pow(self.norm_start[0] - prev.norm_end[0], 2) + math.pow(self.norm_start[1] - prev.norm_end[1],
                                                                                   2))
-                print("{} {}".format(dis, time_elapsed))
 
                 res = self.spacing_weights(dis, dtype) * scaling
             res /= max(time_elapsed, 50)
