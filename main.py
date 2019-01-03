@@ -81,7 +81,7 @@ async def spectate_recent():
     api_in_last_logged += 5 * len(spectating_users)
 
     spectating_users = new_list
-    await asyncio.sleep(int(60 / (30 / (len(spectating_users)*5))) + 10)
+    await asyncio.sleep(int(60 / (30 / (max(len(spectating_users), 1)*5))) + 10)
     await spectate_recent()
 
 async def log():
@@ -121,7 +121,7 @@ async def low_detail_spectate_recent():
     api_in_last_logged += 2 * len(low_detail_spectating_users)
 
     low_detail_spectating_users = new_list
-    await asyncio.sleep(int(60 / (30 / (len(spectating_users)*2))) + 10)
+    await asyncio.sleep(int(60 / (30 / (max(len(low_detail_spectating_users), 1)*2))) + 10)
     await spectate_recent()
 
 def stop():
