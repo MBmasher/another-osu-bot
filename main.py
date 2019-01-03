@@ -129,7 +129,7 @@ def stop():
 
 @client.event
 async def on_message(message):
-    global last_beatmap, spectating_users, logging_channel, logging_message, logging
+    global last_beatmap, spectating_users, logging_channel, logging_message, logging, low_detail_spectating_users
     # we do not want the bot to reply to itself
     if message.author == client.user:
         return
