@@ -121,7 +121,7 @@ async def low_detail_spectate_recent():
     api_in_last_logged += 2 * len(low_detail_spectating_users)
 
     low_detail_spectating_users = new_list
-    await asyncio.sleep(int(60 / (30 / (max(len(low_detail_spectating_users), 1)*2))) + 10)
+    await asyncio.sleep(int(60 / (30 / (max(len(low_detail_spectating_users), 1)*2))) + 5)
     await spectate_recent()
 
 def stop():
@@ -399,7 +399,7 @@ async def on_message(message):
                     client.send_message(message.channel, "test")
                     spectate_message = await client.send_message(message.channel, "Spectating {}...{}".format(spectate_user, low_detail_text))
 
-                    if low_detail:
+                    if not low_detail:
                         spectating_users.append((spectate_message, spectate_user, time.time()))
                     else:
                         low_detail_spectating_users.append((spectate_message, spectate_user, time.time()))
