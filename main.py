@@ -65,7 +65,7 @@ async def spectate_recent():
                 emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                 emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
                 await client.edit_message(message, "Spectating {}...".format(user), embed=emb)
-    await asyncio.sleep(20)
+    await asyncio.sleep(30)
     await spectate_recent()
 
 def stop():
@@ -324,16 +324,9 @@ async def on_message(message):
         else:
             if len(message.content.split(" ")) > 1:
                 spectate_user = "_".join(message.content.split(" ")[1:])
-                user_spectated = False
-                for spectate_message, user in spectating_users:
-                    if user == spectate_user:
-                        await client.send_message(message.channel, "This user is already being spectated.")
-                        user_spectated = True
-                        break
-                if not user_spectated:
-                    client.send_message(message.channel, "test")
-                    spectate_message = await client.send_message(message.channel, "Spectating {}...".format(spectate_user))
-                    spectating_users.append((spectate_message, spectate_user))
+                client.send_message(message.channel, "test")
+                spectate_message = await client.send_message(message.channel, "Spectating {}...".format(spectate_user))
+                spectating_users.append((spectate_message, spectate_user))
             else:
                 await client.send_message(message.channel, "Please specify a user to be spectated.")
 
