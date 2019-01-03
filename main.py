@@ -55,7 +55,7 @@ async def on_message(message):
                 await client.send_message(message.channel, "Please use a number smaller than 50!")
             else:
                 play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
-                    author, 0, number, 0, False)
+                    author, 0, number, 0)
                 if play_list != 5:
                     if len(play_list[0]) <= 1:
                         await client.send_message(message.channel, "{} has no recent plays!".format(author))
@@ -98,7 +98,7 @@ async def on_message(message):
                 await client.send_message(message.channel, "Please use a number smaller than 100!")
             else:
                 play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
-                    author, 1, number, 0, False)
+                    author, 1, number, 0)
                 if play_list != 5:
                     if len(play_list[0]) <= 1:
                         await client.send_message(message.channel, "{} has no top plays! (wtf)".format(author))
@@ -130,16 +130,12 @@ async def on_message(message):
                 author = [0]
                 await client.send_message(message.channel, "Link your account using ~link username")
 
-            show_all = False
-
             if len(message.content.split(" ")) > 1:
                 if message.content.split(" ")[1].isdigit():
                     number = int(message.content.split(" ")[1])
                     number_bool = True
-                if message.content.split(" ")[-1] == "--show-all":
-                    show_all = True
                 if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
-                    author = "_".join(message.content.split(" ")[1 + number_bool:-show_all])
+                    author = "_".join(message.content.split(" ")[1 + number_bool:])
 
             if number > 99:
                 await client.send_message(message.channel, "Please use a number smaller than 100!")
@@ -147,7 +143,7 @@ async def on_message(message):
                 play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
                     author, 2,
                     number,
-                    last_beatmap, show_all)
+                    last_beatmap)
                 if play_list != 5:
                     if len(play_list[0]) <= 1:
                         await client.send_message(message.channel,
@@ -197,7 +193,7 @@ async def on_message(message):
             else:
                 play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
                     author, 3,
-                    number, 0, False)
+                    number, 0)
                 if play_list != 5:
                     if len(play_list) < 1:
                         await client.send_message(message.channel, "{} has no top plays! (wtf)".format(author))
