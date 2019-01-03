@@ -192,7 +192,7 @@ def return_recent(user, best, number, last_beatmap, low_detail):
     fc_string = ""
     top_score_string = ""
 
-    user_info_s = "{}".format(username)
+    user_info_s = "{}".format(user)
     user_link = "https://osu.ppy.sh/u/{}".format(user)
     user_pfp = "https://a.ppy.sh/{}".format(user)
 
