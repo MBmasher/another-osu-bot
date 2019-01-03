@@ -191,6 +191,7 @@ def return_recent(user, best, number, last_beatmap, low_detail):
     rank_string = ""
     fc_string = ""
     top_score_string = ""
+    final_pp = pp.pp
 
     user_info_s = "{}".format(user)
     user_link = "https://osu.ppy.sh/u/{}".format(user)
@@ -217,8 +218,6 @@ def return_recent(user, best, number, last_beatmap, low_detail):
         if int(combo) < int(max_combo):
             fc_pp = calc.return_values(c100, c50, 0, max_combo, str(b_id), mods_string)
             fc_string = " FC {:.2f}pp /".format(fc_pp.pp)
-
-        final_pp = pp.pp
 
         if best == 1 or best == 3:
             final_pp = float(play_info[number-1][14+index_adjust][1])
