@@ -376,9 +376,6 @@ async def on_message(message):
 async def on_ready():
     global server
 
-    p = Periodic(lambda: print('test'), 1)
-    await
-
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
