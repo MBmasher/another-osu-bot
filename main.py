@@ -65,6 +65,7 @@ async def spectate_recent():
                 emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
                 await client.edit_message(message, "Spectating {}...".format(user), embed=emb)
     await asyncio.sleep(20)
+    await spectate_recent()
 
 def stop():
     task.cancel()
@@ -336,7 +337,7 @@ async def on_message(message):
             user_spectated = False
             for spectate_message, user in spectating_users:
                 if user == spectate_user:
-                    await client.edit_message(spectate_message, "This message was originally used to spectate {}.".format(user))
+                    await client.edit_message(spectate_message, "Stopped spectating {}.".format(user))
                     user_spectated = True
                 else:
                     new_list.append((spectate_message, user))
