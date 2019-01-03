@@ -2,33 +2,8 @@ import discord
 import recent
 import random
 import os
-from threading import Timer
-from time import sleep
-
-class RepeatedTimer(object):
-    def __init__(self, interval, function, *args, **kwargs):
-        self._timer     = None
-        self.interval   = interval
-        self.function   = function
-        self.args       = args
-        self.kwargs     = kwargs
-        self.is_running = False
-        self.start()
-
-    def _run(self):
-        self.is_running = False
-        self.start()
-        self.function(*self.args, **self.kwargs)
-
-    def start(self):
-        if not self.is_running:
-            self._timer = Timer(self.interval, self._run)
-            self._timer.start()
-            self.is_running = True
-
-    def stop(self):
-        self._timer.cancel()
-        self.is_running = False
+import time
+import asyncio
 
 key = os.environ.get('API_KEY')
 TOKEN = os.environ.get('TOKEN')
@@ -59,6 +34,10 @@ async def spectate_recent():
                 emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                 emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
                 await client.edit_message(message, "Spectating {}...".format(user), embed=emb)
+    await asyncio.sleep(20)
+
+def stop():
+    task.cancel()
 
 @client.event
 async def on_message(message):
@@ -306,14 +285,14 @@ async def on_message(message):
             if len(message.content.split(" ")) > 1:
                 spectate_user = "_".join(message.content.split(" ")[1:])
                 user_spectated = False
-                for message, user in spectating_users:
+                for spectate_message, user in spectating_users:
                     if user == spectate_user:
                         await client.send_message(message.channel, "This user is already being spectated.")
                         user_spectated = True
                         break
                 if not user_spectated:
-                    spectating_message = client.send_message(message.channel, "Spectating {}...".format(spectate_user))
-                    spectating_users.append((spectating_message, spectate_user))
+                    spectate_message = client.send_message(message.channel, "Spectating {}...".format(spectate_user))
+                    spectating_users.append((spectate_message, spectate_user))
             else:
                 await client.send_message(message.channel, "Please specify a user to be spectated.")
 
@@ -322,12 +301,12 @@ async def on_message(message):
         if len(message.content.split(" ")) > 1:
             spectate_user = "_".join(message.content.split(" ")[1:])
             user_spectated = False
-            for message, user in spectating_users:
+            for spectate_message, user in spectating_users:
                 if user == spectate_user:
-                    await client.edit_message(message, "This message was originally used to spectate {}.".format(user))
+                    await client.edit_message(spectate_message, "This message was originally used to spectate {}.".format(user))
                     user_spectated = True
                 else:
-                    new_list.append((message, user))
+                    new_list.append((spectate_message, user))
 
             if user_spectated:
                 spectating_users = new_list
@@ -369,6 +348,13 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-rt = RepeatedTimer(20, spectate_recent)
-
 client.run(TOKEN)
+
+loop = asyncio.get_event_loop()
+loop.call_later(20, stop)
+task = loop.create_task(spectate_recent())
+
+try:
+    loop.run_until_complete(task)
+except asyncio.CancelledError:
+    pass
