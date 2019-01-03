@@ -50,6 +50,7 @@ logging_message = None
 logging_channel = None
 
 api_in_last_logged = 0
+api_peak = 0
 
 client = discord.Client()
 
@@ -85,15 +86,17 @@ async def spectate_recent():
     await spectate_recent()
 
 async def log():
-    global logging, logging_message, logging_channel, api_in_last_logged
+    global logging, logging_message, logging_channel, api_in_last_logged, api_peak
+    if api_peak < api_in_last_logged:
+        api_peak = api_in_last_logged
     if logging:
         print("edit.")
-        await client.edit_message(logging_message, "Logging...\n{} continuous API requests in the last 30 seconds.".format(api_in_last_logged))
+        await client.edit_message(logging_message, "Logging...\n{} continuous API requests in the last 30 seconds.\n(Peak is {})".format(api_in_last_logged, api_peak))
         print("edit.")
         if api_in_last_logged > 30:
             await client.send_message(logging_channel, "<@203322898079809537> There have been over 30 continuous API requests in the last 30 seconds. Shutting down.")
             sys.exit(1)
-    print("Log: {} {} {} {}".format(api_in_last_logged, logging, logging_message, logging_channel))
+    print("Log: {} {} {} {} {}".format(api_in_last_logged, logging, logging_message, logging_channel, api_peak))
     api_in_last_logged = 0
     await asyncio.sleep(30)
     await log()
