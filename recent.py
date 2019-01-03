@@ -145,7 +145,7 @@ def return_recent(user, best, number, last_beatmap):
     artist = beatmap_info[14][1]
     song_title = beatmap_info[15][1]
     mapper = beatmap_info[16][1]
-    bpm = int(int(beatmap_info[18][1])*time_multiplier)
+    bpm = float(float(beatmap_info[18][1])*time_multiplier)
     max_combo = beatmap_info[26][1]
     star_rating = diff_file[2]
 
@@ -179,7 +179,7 @@ def return_recent(user, best, number, last_beatmap):
         "__**Map Information:**__",
         "**Stars:** {:.2f}*".format(star_rating),
         "**Difficulty Settings:** CS{:.1f} | AR{:.1f} | OD{:.1f} | HP{:.1f}".format(cs, ar, od, hp),
-        "**Song Settings:** {} BPM | length {} (drain {})".format(bpm, song_length, drain_length),
+        "**Song Settings:** {:.1f} BPM | length {} (drain {})".format(bpm, song_length, drain_length),
         "**Status:** {}".format(status_s)
     ]
 
