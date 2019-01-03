@@ -53,18 +53,25 @@ async def spectate_recent():
 
     print(spectating_users)
 
-    for message, user in spectating_users:
+    new_list = []
 
-        play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
-            user, 0, 1, 0)
-        print(diff_s)
-        if play_list != 5:
-            if len(play_list[0]) <= 1:
-                await client.edit_message(message, "Spectating {}...\n{} has no recent plays!".format(user, user))
-            else:
-                emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
-                emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
-                await client.edit_message(message, "Spectating {}...".format(user), embed=emb)
+    for message, user, time_ in spectating_users:
+        if (time.time() - 3600 < time_):
+            await client.edit_message(message, "Timeout (1 hour): Stopped spectating {}.".format(user))
+        else:
+            new_list.append((message, user, time_))
+            play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
+                user, 0, 1, 0)
+            print(diff_s)
+            if play_list != 5:
+                if len(play_list[0]) <= 1:
+                    await client.edit_message(message, "Spectating {}...\n{} has no recent plays!".format(user, user))
+                else:
+                    emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
+                    emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                    await client.edit_message(message, "Spectating {}...".format(user), embed=emb)
+
+    spectating_users = new_list
     await asyncio.sleep(30)
     await spectate_recent()
 
@@ -326,7 +333,7 @@ async def on_message(message):
                 spectate_user = "_".join(message.content.split(" ")[1:])
                 client.send_message(message.channel, "test")
                 spectate_message = await client.send_message(message.channel, "Spectating {}...".format(spectate_user))
-                spectating_users.append((spectate_message, spectate_user))
+                spectating_users.append((spectate_message, spectate_user, time.time()))
             else:
                 await client.send_message(message.channel, "Please specify a user to be spectated.")
 
@@ -336,7 +343,7 @@ async def on_message(message):
         if len(message.content.split(" ")) > 1:
             spectate_user = "_".join(message.content.split(" ")[1:])
             user_spectated = False
-            for spectate_message, user in spectating_users:
+            for spectate_message, user, time_ in spectating_users:
                 if user == spectate_user:
                     await client.edit_message(spectate_message, "Stopped spectating {}.".format(user))
                     user_spectated = True
