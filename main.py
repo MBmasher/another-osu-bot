@@ -381,15 +381,21 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-client.run(TOKEN)
+async def main():
+    tasks = [
+        client.start(TOKEN),
+        spectate_recent()
+    ]
 
-loop = asyncio.get_event_loop()
+    while len(tasks):
+        done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+        for task in done:
+            print(task, task.result())
 
-async def constant_update():
-    while True:
-        await spectate_recent()
-        await asyncio.sleep(20, loop=loop)
 
-task = loop.create_task(constant_update())
-cors = asyncio.wait([on_message(), on_ready()])
-loop.run_until_complete(cors)
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main())
+    finally:
+        loop.close()
