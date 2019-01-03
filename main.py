@@ -56,7 +56,7 @@ async def spectate_recent():
     new_list = []
 
     for message, user, time_ in spectating_users:
-        if (time.time() - 3600 < time_):
+        if (time.time() > time_ + 3600):
             await client.edit_message(message, "Timeout (1 hour): Stopped spectating {}.".format(user))
         else:
             new_list.append((message, user, time_))
