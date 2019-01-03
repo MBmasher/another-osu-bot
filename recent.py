@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 def get_date(record):
     return datetime.strptime(record[12][1], '%Y-%m-%d %H:%M:%S')
 
-def return_recent(user, best, number, last_beatmap):
+def return_recent(user, best, number, last_beatmap, low_detail):
     user = "_".join(user.split(" "))
 
     if user == [0]:
@@ -125,6 +125,7 @@ def return_recent(user, best, number, last_beatmap):
     c300 = play_info[number-1][5+index_adjust][1]
     misses = play_info[number-1][6+index_adjust][1]
     pp = calc.return_values(c100, c50, misses, combo, str(b_id), mods_string)
+    final_pp = pp
     max_pp = calc.return_values("", "", "", "", str(b_id), mods_string)
 
     objects = len(new_beatmap.objects)
@@ -185,73 +186,73 @@ def return_recent(user, best, number, last_beatmap):
 
     map_text = '\n'.join(map_text_list)
 
-    url = 'https://osu.ppy.sh/api/get_user?k={}&u={}'.format(key, user)
-    jsonurl = str(requests.get(url).text)
-    jsonurl = jsonurl[2:-2]
-    user_split = jsonurl.split(",")
-    user_info = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in user_split]
+    score = play_info[number - 1][1][1]
+    grade = play_info[number - 1][13 + index_adjust][1]
+    rank_string = ""
+    fc_string = ""
+    top_score_string = ""
 
-    username = user_info[1][1]
-    rank = user_info[9][1]
-    pp_total = user_info[11][1]
-    country = user_info[18][1]
-    country_rank = user_info[20][1]
-
-    user_info_s = "{} | {}pp, global #{} ({} #{})".format(username, pp_total, rank, country, country_rank)
+    user_info_s = "{}".format(username)
     user_link = "https://osu.ppy.sh/u/{}".format(user)
-
     user_pfp = "https://a.ppy.sh/{}".format(user)
 
-    score = play_info[number-1][1][1]
-    grade = play_info[number-1][13+index_adjust][1]
+    if not low_detail:
+        url = 'https://osu.ppy.sh/api/get_user?k={}&u={}'.format(key, user)
+        jsonurl = str(requests.get(url).text)
+        jsonurl = jsonurl[2:-2]
+        user_split = jsonurl.split(",")
+        user_info = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in user_split]
 
-    if grade == "F":
-        grade += " ({:.2f}% completion)".format(100 * ((int(c50) + int(c100) + int(c300) + int(misses)) / objects))
+        username = user_info[1][1]
+        rank = user_info[9][1]
+        pp_total = user_info[11][1]
+        country = user_info[18][1]
+        country_rank = user_info[20][1]
 
-    fc_string = ""
+        user_info_s = "{} | {}pp, global #{} ({} #{})".format(username, pp_total, rank, country, country_rank)
 
-    if int(combo) < int(max_combo):
-        fc_pp = calc.return_values(c100, c50, 0, max_combo, str(b_id), mods_string)
-        fc_string = " FC {:.2f}pp /".format(fc_pp.pp)
+        if grade == "F":
+            grade += " ({:.2f}% completion)".format(100 * ((int(c50) + int(c100) + int(c300) + int(misses)) / objects))
 
-    final_pp = pp.pp
+        if int(combo) < int(max_combo):
+            fc_pp = calc.return_values(c100, c50, 0, max_combo, str(b_id), mods_string)
+            fc_string = " FC {:.2f}pp /".format(fc_pp.pp)
 
-    if best == 1 or best == 3:
-        final_pp = float(play_info[number-1][14+index_adjust][1])
+        final_pp = pp.pp
 
-    url = 'https://osu.ppy.sh/api/get_scores?k={}&b={}&limit=100'.format(key, b_id)
-    jsonurl = str(requests.get(url).text)
-    jsonurl = jsonurl[1:-2]
-    user_split = [i[1:] for i in jsonurl.split("},")]
-    leaderboard_info = []
-    for i in range(len(user_split)):
-        leaderboard_info.append([])
-        info_list = user_split[i].split(",")
-        leaderboard_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
+        if best == 1 or best == 3:
+            final_pp = float(play_info[number-1][14+index_adjust][1])
 
-    rank_string = ""
-    for i in range(100):
-        if leaderboard_info[i][1][1] == str(score) and leaderboard_info[i][2][1] == username:
-            rank_string = " __**#{}**__".format(i+1)
-            if best == 0 or best == 2:
-                final_pp = float(play_info[i - 1][14 + index_adjust][1])
-            break
+        url = 'https://osu.ppy.sh/api/get_scores?k={}&b={}&limit=100'.format(key, b_id)
+        jsonurl = str(requests.get(url).text)
+        jsonurl = jsonurl[1:-2]
+        user_split = [i[1:] for i in jsonurl.split("},")]
+        leaderboard_info = []
+        for i in range(len(user_split)):
+            leaderboard_info.append([])
+            info_list = user_split[i].split(",")
+            leaderboard_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
 
-    url = 'https://osu.ppy.sh/api/get_user_best?k={}&u={}&limit=100'.format(key, user)
-    jsonurl = str(requests.get(url).text)
-    jsonurl = jsonurl[1:-2]
-    user_split = [i[1:] for i in jsonurl.split("},")]
-    top_scores_info = []
-    for i in range(len(user_split)):
-        top_scores_info.append([])
-        info_list = user_split[i].split(",")
-        top_scores_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
+        for i in range(100):
+            if leaderboard_info[i][1][1] == str(score) and leaderboard_info[i][2][1] == username:
+                rank_string = " __**#{}**__".format(i+1)
+                if best == 0 or best == 2:
+                    final_pp = float(play_info[i - 1][14 + index_adjust][1])
+                break
 
-    top_score_string = ""
-    for i in range(100):
-        if top_scores_info[i][1][1] == str(score) and top_scores_info[i][0][1] == str(b_id):
-            top_score_string = " __**#{}**__".format(i + 1)
-            break
+        url = 'https://osu.ppy.sh/api/get_user_best?k={}&u={}&limit=100'.format(key, user)
+        jsonurl = str(requests.get(url).text)
+        jsonurl = jsonurl[1:-2]
+        user_split = [i[1:] for i in jsonurl.split("},")]
+        top_scores_info = []
+        for i in range(len(user_split)):
+            top_scores_info.append([])
+            info_list = user_split[i].split(",")
+            top_scores_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
+        for i in range(100):
+            if top_scores_info[i][1][1] == str(score) and top_scores_info[i][0][1] == str(b_id):
+                top_score_string = " __**#{}**__".format(i + 1)
+                break
 
     play_info_list = [
         "__**Play Information:**__",
