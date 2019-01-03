@@ -160,7 +160,7 @@ async def on_message(message):
                         emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
                         await client.send_message(message.channel, embed=emb)
         except:
-            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass\n{}")
+            await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
 
     if message.content.startswith('~recentbest') or message.content.startswith('~rb'):
         try:
@@ -262,7 +262,20 @@ async def on_message(message):
                 '>recent') or message.content.startswith('>top') or message.content.startswith(
                 '>best') or message.content.startswith('>rs') or message.content.startswith('>roll')
             or message.content.startswith('!roll')):
-        await client.send_message(message.channel,
+        user_id = message.author.id
+        if str(user_id) == "138585010784436224":
+            await client.send_message(message.channel,
+                                      "fuck you <@138585010784436224>")
+            await client.send_message(message.channel,
+                                      "fuck you <@138585010784436224>")
+            await client.send_message(message.channel,
+                                      "fuck you <@138585010784436224>")
+            await client.send_message(message.channel,
+                                      "fuck you <@138585010784436224>")
+            await client.send_message(message.channel,
+                                      "fuck you <@138585010784436224>")
+        else:
+            await client.send_message(message.channel,
                                   "I'm online, use me!! (I'm definitely cooler than BoatBot or owo)")
 
 @client.event
