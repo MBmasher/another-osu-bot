@@ -77,6 +77,13 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    if message.content.startswith('~shutdown'):
+        user_id = message.author.id
+        if str(user_id) != "203322898079809537":
+            await client.send_message(message.channel, "Only MBmasher can close the bot.")
+        else:
+            await client.send_message(message.channel, "Shutting down.")
+
     if message.content.startswith('~recent') or message.content.startswith('~rs') or message.content.startswith(
             '~r') and not message.content.startswith('~rb') and not message.content.startswith('~roll'):
 
