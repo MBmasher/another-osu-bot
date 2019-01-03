@@ -381,6 +381,8 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
+client.run(TOKEN)
+
 loop = asyncio.new_event_loop()
 
 async def constant_update():
@@ -390,5 +392,3 @@ async def constant_update():
 
 task = loop.create_task(constant_update())
 loop.run_forever()
-
-client.run(TOKEN)
