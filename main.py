@@ -5,6 +5,33 @@ import os
 import time
 import asyncio
 
+class Periodic:
+    def __init__(self, func, time):
+        self.func = func
+        self.time = time
+        self.is_started = False
+        self._task = None
+
+    async def start(self):
+        if not self.is_started:
+            self.is_started = True
+            # Start task to call func periodically:
+            self._task = asyncio.ensure_future(self._run())
+
+    async def stop(self):
+        if self.is_started:
+            self.is_started = False
+            # Stop task and await it stopped:
+            self._task.cancel()
+            with suppress(asyncio.CancelledError):
+                await self._task
+
+    async def _run(self):
+        while True:
+            await asyncio.sleep(self.time)
+            self.func()
+
+
 key = os.environ.get('API_KEY')
 TOKEN = os.environ.get('TOKEN')
 
@@ -282,8 +309,8 @@ async def on_message(message):
 
     if message.content.startswith('~spectate') or message.content.startswith('~spec'):
         print(spectating_users)
-        if len(spectating_users) >= 5:
-            await client.send_message(message.channel, "Cannot spectate more than 5 users.\nCurrent list of spectated users: {}\nUnspectate one of these users if you'd like to spectate a different user.".format(", ".join(spectating_users)))
+        if len(spectating_users) >= 3:
+            await client.send_message(message.channel, "Cannot spectate more than 3 users at a time.\nCurrent list of spectated users: {}\nUnspectate one of these users if you'd like to spectate a different user.".format(", ".join(spectating_users)))
         else:
             if len(message.content.split(" ")) > 1:
                 spectate_user = "_".join(message.content.split(" ")[1:])
@@ -348,18 +375,23 @@ async def on_message(message):
 @client.event
 async def on_ready():
     global server
+
+    p = Periodic(lambda: print('test'), 1)
+    await
+
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
     print('------')
 
+loop = asyncio.new_event_loop()
+
+async def constant_update():
+    while True:
+        await spectate_recent()
+        await asyncio.sleep(20, loop=loop)
+
+task = loop.create_task(constant_update())
+loop.run_forever()
+
 client.run(TOKEN)
-
-loop = asyncio.get_event_loop()
-loop.call_later(20, stop)
-task = loop.create_task(spectate_recent())
-
-try:
-    loop.run_until_complete(task)
-except asyncio.CancelledError:
-    pass
