@@ -122,7 +122,7 @@ async def low_detail_spectate_recent():
 
     low_detail_spectating_users = new_list
     await asyncio.sleep(int(60 / (30 / (max(len(low_detail_spectating_users), 1)*2))) + 5)
-    await spectate_recent()
+    await low_detail_spectate_recent()
 
 def stop():
     task.cancel()
@@ -484,6 +484,7 @@ async def main():
     tasks = [
         client.start(TOKEN),
         spectate_recent(),
+        low_detail_spectate_recent(),
         log()
     ]
 
