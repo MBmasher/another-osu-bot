@@ -23,10 +23,13 @@ last_beatmap = 0
 async def spectate_recent():
     global spectating_users
 
+    print(spectating_users)
+
     for message, user in spectating_users:
 
         play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
             user, 0, 1, 0)
+        print(diff_s)
         if play_list != 5:
             if len(play_list[0]) <= 1:
                 await client.edit_message(message, "Spectating {}...\n{} has no recent plays!".format(user, user))
@@ -291,6 +294,7 @@ async def on_message(message):
                         user_spectated = True
                         break
                 if not user_spectated:
+                    client.send_message(message.channel, "test")
                     spectate_message = client.send_message(message.channel, "Spectating {}...".format(spectate_user))
                     spectating_users.append((spectate_message, spectate_user))
             else:
