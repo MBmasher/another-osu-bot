@@ -164,8 +164,8 @@ async def low_detail_spectate_recent():
 
 async def low_detail_spectate_recent_loop():
     while True:
-        await asyncio.sleep(int(60 / (30 / (max(len(spectating_users), 1) * 2))) + 10)
-        await spectate_recent()
+        await asyncio.sleep(int(60 / (30 / (max(len(low_detail_spectating_users), 1) * 2))) + 10)
+        await low_detail_spectate_recent()
 
 def stop():
     task.cancel()
