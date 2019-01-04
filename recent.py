@@ -125,7 +125,6 @@ def return_recent(user, best, number, last_beatmap, low_detail):
     c300 = play_info[number-1][5+index_adjust][1]
     misses = play_info[number-1][6+index_adjust][1]
     pp = calc.return_values(c100, c50, misses, combo, str(b_id), mods_string)
-    final_pp = pp
     max_pp = calc.return_values("", "", "", "", str(b_id), mods_string)
 
     objects = len(new_beatmap.objects)
@@ -194,6 +193,9 @@ def return_recent(user, best, number, last_beatmap, low_detail):
     top_score_string = ""
     final_pp = pp.pp
 
+    if grade == "F":
+        grade += " ({:.2f}% completion)".format(100 * ((int(c50) + int(c100) + int(c300) + int(misses)) / objects))
+
     user_info_s = "{}".format(user)
     user_link = "https://osu.ppy.sh/u/{}".format(user)
     user_pfp = ""
@@ -218,9 +220,6 @@ def return_recent(user, best, number, last_beatmap, low_detail):
         country_rank = user_info[20][1]
 
         user_info_s = "{} | {}pp, global #{} ({} #{})".format(username, pp_total, rank, country, country_rank)
-
-        if grade == "F":
-            grade += " ({:.2f}% completion)".format(100 * ((int(c50) + int(c100) + int(c300) + int(misses)) / objects))
 
         if best == 1 or best == 3:
             final_pp = float(play_info[number-1][14+index_adjust][1])
