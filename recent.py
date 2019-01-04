@@ -18,7 +18,7 @@ def return_recent(user, best, number, last_beatmap, low_detail):
     user = "_".join(user.split(" "))
 
     if user == [0]:
-        return 5, 0, 0, 0, 0, 0, 0, 0
+        return 5, 0, 0, 0, 0, 0, 0, 0, 0
 
     try:
         f = open('keys.cfg');
@@ -235,7 +235,7 @@ def return_recent(user, best, number, last_beatmap, low_detail):
             info_list = user_split[i].split(",")
             leaderboard_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
 
-        for i in range(100):
+        for i in range(len(leaderboard_info)):
             if leaderboard_info[i][1][1] == str(score) and leaderboard_info[i][2][1] == username:
                 rank_string = " __**#{}**__".format(i+1)
                 if best == 0 or best == 2:
@@ -251,7 +251,7 @@ def return_recent(user, best, number, last_beatmap, low_detail):
             top_scores_info.append([])
             info_list = user_split[i].split(",")
             top_scores_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
-        for i in range(100):
+        for i in range(len(top_scores_info)):
             if top_scores_info[i][1][1] == str(score) and top_scores_info[i][0][1] == str(b_id):
                 top_score_string = " __**#{}**__".format(i + 1)
                 break
