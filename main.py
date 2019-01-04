@@ -5,6 +5,7 @@ import os
 import time
 import asyncio
 import sys
+from datetime import datetime, timezone
 
 class Periodic:
     def __init__(self, func, time):
@@ -48,6 +49,8 @@ fin.close()
 logging = False
 logging_message = None
 logging_channel = None
+last_api_log_time = time.time()
+on_time = time.time()
 
 api_in_last_logged = 0
 api_peak = 0
@@ -59,8 +62,6 @@ last_beatmap = 0
 async def spectate_recent():
     global spectating_users, api_in_last_logged
 
-    print(spectating_users)
-
     new_list = []
 
     for message, user, time_ in spectating_users:
@@ -70,7 +71,6 @@ async def spectate_recent():
             new_list.append((message, user, time_))
             play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
                 user, 0, 1, 0, False)
-            print(diff_s)
             if play_list != 5:
                 if len(play_list[0]) <= 1:
                     await client.edit_message(message, "Spectating {}...\n{} has no recent plays!".format(user, user))
@@ -86,25 +86,52 @@ async def spectate_recent():
     await spectate_recent()
 
 async def log():
-    global logging, logging_message, logging_channel, api_in_last_logged, api_peak
+    global logging, logging_message, logging_channel, api_in_last_logged, api_peak, last_api_log_time
     if api_peak < api_in_last_logged:
         api_peak = api_in_last_logged
     if logging:
-        print("edit.")
-        await client.edit_message(logging_message, "Logging...\n{} continuous API requests in the last 30 seconds.\n(Peak is {})".format(api_in_last_logged, api_peak))
-        print("edit.")
-        if api_in_last_logged > 30:
-            await client.send_message(logging_channel, "<@203322898079809537> There have been over 30 continuous API requests in the last 30 seconds. Shutting down.")
-            sys.exit(1)
-    print("Log: {} {} {} {} {}".format(api_in_last_logged, logging, logging_message, logging_channel, api_peak))
-    api_in_last_logged = 0
-    await asyncio.sleep(30)
+        log_message_text = "Logging...\n{} continuous API requests in the last 120 seconds.\n(Peak is {})"
+        if time.time() > last_api_log_time+120:
+            last_api_log_time = time.time()
+            if api_in_last_logged > 120:
+                await client.send_message(logging_channel, "<@203322898079809537> There have been over 100 continuous API requests in the last 120 seconds. Shutting down.")
+                sys.exit(1)
+            api_in_last_logged = 0
+        now = int(time.time())
+        d = divmod(now - on_time, 86400)  # days
+        h = divmod(d[1], 3600)  # hours
+        m = divmod(h[1], 60)  # minutes
+        s = m[1]  # seconds
+        time_ago = ""
+        if d[0] > 0:
+            if int(d[0]) == 1:
+                time_ago += "1 day, "
+            else:
+                time_ago += "{} days, ".format(int(d[0]))
+        if h[0] > 0:
+            if int(h[0]) == 1:
+                time_ago += "1 hour, "
+            else:
+                time_ago += "{} hours, ".format(int(h[0]))
+        if m[0] > 0:
+            if int(m[0]) == 1:
+                time_ago += "1 minute, "
+            else:
+                time_ago += "{} minutes, ".format(int(m[0]))
+            if int(s) == 1:
+                time_ago += "1 second"
+            else:
+                time_ago += "{} seconds".format(int(s))
+        logging_message += "\nUptime: {}\nTurned on at {} (UTC time)\nLast updated at {} (UTC time)".format(time_ago,
+                                                                                                            datetime.utcfromtimestamp(on_time).strftime('%Y-%m-%d %H:%M:%S'),
+                                                                                                            datetime.utcfromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+
+        await client.edit_message(logging_message, log_message_text)
+    await asyncio.sleep(5)
     await log()
 
 async def low_detail_spectate_recent():
     global low_detail_spectating_users, api_in_last_logged
-
-    print(low_detail_spectating_users)
 
     new_list = []
 
@@ -115,7 +142,6 @@ async def low_detail_spectate_recent():
             new_list.append((message, user, time_))
             play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
                 user, 0, 1, 0, True)
-            print(diff_s)
             if play_list != 5:
                 if len(play_list[0]) <= 1:
                     await client.edit_message(message, "Spectating {}... (Low detail)\n{} has no recent plays!".format(user, user))
@@ -390,18 +416,13 @@ async def on_message(message):
                                       "Current list of spectated users: {}\n{}".format(
                                           ", ".join([i[1] for i in spectating_users]), ", ".join([i[1] for i in low_detail_spectating_users])))
         if not listing:
-            print(spectating_users)
-            print(low_detail_spectating_users)
             if len(spectating_users) + len(low_detail_spectating_users) >= 5:
                 await client.send_message(message.channel,
                                           "Cannot spectate more than 5 users at a time.\nCurrent list of spectated users: {}\n{}\nUnspectate one of these users if you'd like to spectate a different user.".format(
                                           ", ".join([i[1] for i in spectating_users]), ", ".join([i[1] for i in low_detail_spectating_users])))
             else:
                 if len(message.content.split(" ")) > 1:
-                    if low_detail:
-                        spectate_user = "_".join(message.content.split(" ")[1:-1])
-                    else:
-                        spectate_user = "_".join(message.content.split(" ")[1:])
+                    spectate_user = "_".join(message.content.split(" ")[1:-low_detail])
                     low_detail_text = ""
                     if low_detail:
                         low_detail_text = " (Low detail)"
@@ -416,7 +437,6 @@ async def on_message(message):
                     await client.send_message(message.channel, "Please specify a user to be spectated.")
 
     if message.content.startswith('~unspectate') or message.content.startswith('~unspec'):
-        print(spectating_users)
         new_list = []
         low_detail_new_list = []
         if len(message.content.split(" ")) > 1:
