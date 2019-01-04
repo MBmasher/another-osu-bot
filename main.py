@@ -428,7 +428,10 @@ async def on_message(message):
                                           ", ".join([i[1] for i in spectating_users]), ", ".join([i[1] for i in low_detail_spectating_users])))
             else:
                 if len(message.content.split(" ")) > 1:
-                    spectate_user = " ".join(message.content.split(" ")[1:-low_detail])
+                    if low_detail:
+                        spectate_user = " ".join(message.content.split(" ")[1:-1])
+                    else:
+                        spectate_user = " ".join(message.content.split(" ")[1:])
                     low_detail_text = ""
                     if low_detail:
                         low_detail_text = " (Low detail)"
