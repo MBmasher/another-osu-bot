@@ -180,207 +180,192 @@ async def on_message(message):
         if message.content.startswith('~recent') or message.content.startswith('~rs') or message.content.startswith(
                 '~r') and not message.content.startswith('~rb') and not message.content.startswith('~roll'):
 
-            try:
-                number_bool = False
-                number = 1
-                user_id = message.author.id
+            number_bool = False
+            number = 1
+            user_id = message.author.id
 
-                fin = open('links.txt', 'r+')
-                lines = [line.rstrip() for line in fin.readlines()]
-                found = False
-                for line in lines:
-                    space_split = line.split(" ")
-                    if space_split[0] == str(user_id):
-                        author = " ".join(space_split[1:])
-                        found = True
-                        break
+            fin = open('links.txt', 'r+')
+            lines = [line.rstrip() for line in fin.readlines()]
+            found = False
+            for line in lines:
+                space_split = line.split(" ")
+                if space_split[0] == str(user_id):
+                    author = " ".join(space_split[1:])
+                    found = True
+                    break
 
-                if not found:
-                    author = [0]
-                    await client.send_message(message.channel, "Link your account using ~link username")
+            if not found:
+                author = [0]
+                await client.send_message(message.channel, "Link your account using ~link username")
 
-                if len(message.content.split(" ")) > 1:
-                    if message.content.split(" ")[1].isdigit():
-                        number = int(message.content.split(" ")[1])
-                        number_bool = True
-                    if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
-                        author = " ".join(message.content.split(" ")[1 + number_bool:])
-                if number > 49:
-                    await client.send_message(message.channel, "Please use a number smaller than 50!")
-                else:
-                    play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
-                        author, 0, number, 0, False)
-                    if play_list != 5:
-                        if len(play_list[0]) <= 1:
-                            await client.send_message(message.channel, "{} has no recent plays!".format(author))
-                        else:
-                            last_beatmap = b_id
-                            emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
-                            emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
-                            emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
-                            await client.send_message(message.channel, embed=emb)
-            except:
-                await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
+            if len(message.content.split(" ")) > 1:
+                if message.content.split(" ")[1].isdigit():
+                    number = int(message.content.split(" ")[1])
+                    number_bool = True
+                if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
+                    author = " ".join(message.content.split(" ")[1 + number_bool:])
+            if number > 49:
+                await client.send_message(message.channel, "Please use a number smaller than 50!")
+            else:
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
+                    author, 0, number, 0, False)
+                if play_list != 5:
+                    if len(play_list[0]) <= 1:
+                        await client.send_message(message.channel, "{} has no recent plays!".format(author))
+                    else:
+                        last_beatmap = b_id
+                        emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
+                        emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
+                        await client.send_message(message.channel, embed=emb)
 
         if message.content.startswith('~best') or message.content.startswith('~top'):
-            try:
-                number_bool = False
-                number = 1
-                user_id = message.author.id
+            number_bool = False
+            number = 1
+            user_id = message.author.id
 
-                fin = open('links.txt', 'r+')
-                lines = [line.rstrip() for line in fin.readlines()]
-                found = False
-                for line in lines:
-                    space_split = line.split(" ")
-                    if space_split[0] == str(user_id):
-                        author = " ".join(space_split[1:])
-                        found = True
-                        break
+            fin = open('links.txt', 'r+')
+            lines = [line.rstrip() for line in fin.readlines()]
+            found = False
+            for line in lines:
+                space_split = line.split(" ")
+                if space_split[0] == str(user_id):
+                    author = " ".join(space_split[1:])
+                    found = True
+                    break
 
-                if not found:
-                    author = [0]
-                    await client.send_message(message.channel, "Link your account using ~link username")
+            if not found:
+                author = [0]
+                await client.send_message(message.channel, "Link your account using ~link username")
 
-                if len(message.content.split(" ")) > 1:
-                    if message.content.split(" ")[1].isdigit():
-                        number = int(message.content.split(" ")[1])
-                        number_bool = True
-                    if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
-                        author = " ".join(message.content.split(" ")[1 + number_bool:])
+            if len(message.content.split(" ")) > 1:
+                if message.content.split(" ")[1].isdigit():
+                    number = int(message.content.split(" ")[1])
+                    number_bool = True
+                if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
+                    author = " ".join(message.content.split(" ")[1 + number_bool:])
 
-                if number > 99:
-                    await client.send_message(message.channel, "Please use a number smaller than 100!")
-                else:
-                    play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
-                        author, 1, number, 0, False)
-                    if play_list != 5:
-                        if len(play_list[0]) <= 1:
-                            await client.send_message(message.channel, "{} has no top plays! (wtf)".format(author))
-                        else:
-                            last_beatmap = b_id
-                            emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
-                            emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
-                            emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
-                            await client.send_message(message.channel, embed=emb)
-            except:
-                await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
+            if number > 99:
+                await client.send_message(message.channel, "Please use a number smaller than 100!")
+            else:
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
+                    author, 1, number, 0, False)
+                if play_list != 5:
+                    if len(play_list[0]) <= 1:
+                        await client.send_message(message.channel, "{} has no top plays! (wtf)".format(author))
+                    else:
+                        last_beatmap = b_id
+                        emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
+                        emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
+                        await client.send_message(message.channel, embed=emb)
 
         if message.content.startswith('~compare') or message.content.startswith('~c'):
-            try:
-                number_bool = False
-                number = 1
-                user_id = message.author.id
+            number_bool = False
+            number = 1
+            user_id = message.author.id
 
-                fin = open('links.txt', 'r+')
-                lines = [line.rstrip() for line in fin.readlines()]
-                found = False
-                for line in lines:
-                    space_split = line.split(" ")
-                    if space_split[0].lower() == str(user_id).lower():
-                        author = " ".join(space_split[1:])
-                        found = True
-                        break
+            fin = open('links.txt', 'r+')
+            lines = [line.rstrip() for line in fin.readlines()]
+            found = False
+            for line in lines:
+                space_split = line.split(" ")
+                if space_split[0].lower() == str(user_id).lower():
+                    author = " ".join(space_split[1:])
+                    found = True
+                    break
 
-                if not found:
-                    author = [0]
-                    await client.send_message(message.channel, "Link your account using ~link username")
+            if not found:
+                author = [0]
+                await client.send_message(message.channel, "Link your account using ~link username")
 
-                if len(message.content.split(" ")) > 1:
-                    if message.content.split(" ")[1].isdigit():
-                        number = int(message.content.split(" ")[1])
-                        number_bool = True
-                    if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
-                        author = " ".join(message.content.split(" ")[1 + number_bool:])
+            if len(message.content.split(" ")) > 1:
+                if message.content.split(" ")[1].isdigit():
+                    number = int(message.content.split(" ")[1])
+                    number_bool = True
+                if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
+                    author = " ".join(message.content.split(" ")[1 + number_bool:])
 
-                if number > 99:
-                    await client.send_message(message.channel, "Please use a number smaller than 100!")
-                else:
-                    play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
-                        author, 2,
-                        number,
-                        last_beatmap, False)
-                    if play_list != 5:
-                        if len(play_list[0]) <= 1:
-                            await client.send_message(message.channel,
-                                                      "{} has no plays on this beatmap!".format(author))
-                        elif link_s == 0:
-                            play = "play"
-                            if len(play_list) > 1:
-                                play += "s"
-                            await client.send_message(message.channel,
-                                                      "{} has no more than {} {} on this beatmap!".format(author, len(
-                                                          play_list), play))
-                        else:
-                            emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
-                            emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
-                            emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
-                            await client.send_message(message.channel, embed=emb)
-            except:
-                await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
+            if number > 99:
+                await client.send_message(message.channel, "Please use a number smaller than 100!")
+            else:
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
+                    author, 2,
+                    number,
+                    last_beatmap, False)
+                if play_list != 5:
+                    if len(play_list[0]) <= 1:
+                        await client.send_message(message.channel,
+                                                  "{} has no plays on this beatmap!".format(author))
+                    elif link_s == 0:
+                        play = "play"
+                        if len(play_list) > 1:
+                            play += "s"
+                        await client.send_message(message.channel,
+                                                  "{} has no more than {} {} on this beatmap!".format(author, len(
+                                                      play_list), play))
+                    else:
+                        emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
+                        emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
+                        await client.send_message(message.channel, embed=emb)
 
         if message.content.startswith('~recentbest') or message.content.startswith('~rb'):
-            try:
-                number_bool = False
-                number = 1
-                user_id = message.author.id
+            number_bool = False
+            number = 1
+            user_id = message.author.id
 
-                fin = open('links.txt', 'r+')
-                lines = [line.rstrip() for line in fin.readlines()]
-                found = False
-                for line in lines:
-                    space_split = line.split(" ")
-                    if space_split[0].lower() == str(user_id).lower():
-                        author = " ".join(space_split[1:])
-                        found = True
-                        break
+            fin = open('links.txt', 'r+')
+            lines = [line.rstrip() for line in fin.readlines()]
+            found = False
+            for line in lines:
+                space_split = line.split(" ")
+                if space_split[0].lower() == str(user_id).lower():
+                    author = " ".join(space_split[1:])
+                    found = True
+                    break
 
-                if not found:
-                    author = [0]
-                    await client.send_message(message.channel, "Link your account using ~link username")
+            if not found:
+                author = [0]
+                await client.send_message(message.channel, "Link your account using ~link username")
 
-                if len(message.content.split(" ")) > 1:
-                    if message.content.split(" ")[1].isdigit():
-                        number = int(message.content.split(" ")[1])
-                        number_bool = True
-                    if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
-                        author = " ".join(message.content.split(" ")[1 + number_bool:])
-                if number > 99:
-                    await client.send_message(message.channel, "Please use a number smaller than 100!")
-                else:
-                    play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
-                        author, 3,
-                        number, 0, False)
-                    if play_list != 5:
-                        if len(play_list) < 1:
-                            await client.send_message(message.channel, "{} has no top plays! (wtf)".format(author))
-                        else:
-                            last_beatmap = b_id
-                            emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
-                            emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
-                            emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
-                            await client.send_message(message.channel, embed=emb)
-            except:
-                await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
+            if len(message.content.split(" ")) > 1:
+                if message.content.split(" ")[1].isdigit():
+                    number = int(message.content.split(" ")[1])
+                    number_bool = True
+                if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
+                    author = " ".join(message.content.split(" ")[1 + number_bool:])
+            if number > 99:
+                await client.send_message(message.channel, "Please use a number smaller than 100!")
+            else:
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
+                    author, 3,
+                    number, 0, False)
+                if play_list != 5:
+                    if len(play_list) < 1:
+                        await client.send_message(message.channel, "{} has no top plays! (wtf)".format(author))
+                    else:
+                        last_beatmap = b_id
+                        emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
+                        emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
+                        await client.send_message(message.channel, embed=emb)
 
         if message.content.startswith('~roll'):
-            try:
-                number_bool = True
-                number = 100
-                user_id = message.author.id
-                if len(message.content.split(" ")) > 1:
-                    if message.content.split(" ")[1].isdigit():
-                        number = int(message.content.split(" ")[1])
-                    else:
-                        number_bool = False
-                        await client.send_message(message.channel, "Are you fucking stupid? That's not a number.")
+            number_bool = True
+            number = 100
+            user_id = message.author.id
+            if len(message.content.split(" ")) > 1:
+                if message.content.split(" ")[1].isdigit():
+                    number = int(message.content.split(" ")[1])
+                else:
+                    number_bool = False
+                    await client.send_message(message.channel, "Are you fucking stupid? That's not a number.")
 
-                if number_bool:
-                    await client.send_message(message.channel,
-                                              "<@{}> rolled a {} out of {}.".format(user_id, random.randint(1, number),
-                                                                                number))
-            except:
-                await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
+            if number_bool:
+                await client.send_message(message.channel,
+                                          "<@{}> rolled a {} out of {}.".format(user_id, random.randint(1, number),
+                                                                            number))
 
         if message.content.startswith('~link'):
             name = ""
@@ -511,8 +496,8 @@ async def on_message(message):
             else:
                 await client.send_message(message.channel,
                                       "I'm online, use me!! (I'm definitely cooler than BoatBot or owo)")
-    except:
-        await client.send_message(message.channel, "<@203322898079809537> Something's gone wrong")
+    except Exception as e:
+        await client.send_message(message.channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
 
 @client.event
 async def on_ready():
