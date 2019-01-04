@@ -118,11 +118,11 @@ async def log():
                 time_ago += "1 minute, "
             else:
                 time_ago += "{} minutes, ".format(int(m[0]))
-            if int(s) == 1:
-                time_ago += "1 second"
-            else:
-                time_ago += "{} seconds".format(int(s))
-        logging_message += "\nUptime: {}\nTurned on at {} (UTC time)\nLast updated at {} (UTC time)".format(time_ago,
+        if int(s) == 1:
+            time_ago += "1 second"
+        else:
+            time_ago += "{} seconds".format(int(s))
+        log_message_text += "\nUptime: {}\nTurned on at {} (UTC time)\nLast updated at {} (UTC time)".format(time_ago,
                                                                                                             datetime.utcfromtimestamp(on_time).strftime('%Y-%m-%d %H:%M:%S'),
                                                                                                             datetime.utcfromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 
