@@ -136,6 +136,7 @@ def return_recent(user, best, number, last_beatmap, low_detail):
     beatmap_split = jsonurl.split(",")
     beatmap_info = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in beatmap_split]
 
+    s_id = beatmap_info[0][1]
     song_length = int(int(beatmap_info[3][1])/time_multiplier)
     drain_length = int(int(beatmap_info[4][1])/time_multiplier)
     diff = beatmap_info[5][1]
@@ -195,7 +196,7 @@ def return_recent(user, best, number, last_beatmap, low_detail):
 
     user_info_s = "{}".format(user)
     user_link = "https://osu.ppy.sh/u/{}".format(user)
-    user_pfp = "https://a.ppy.sh/{}".format(user)
+    user_pfp = ""
 
     if not low_detail:
         url = 'https://osu.ppy.sh/api/get_user?k={}&u={}'.format(key, user)
@@ -204,6 +205,8 @@ def return_recent(user, best, number, last_beatmap, low_detail):
         user_split = jsonurl.split(",")
         user_info = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in user_split]
 
+        user_id = user_info[0][1]
+        user_pfp = "https://a.ppy.sh/{}".format(user_id)
         username = user_info[1][1]
         rank = user_info[9][1]
         pp_total = user_info[11][1]
@@ -283,4 +286,4 @@ def return_recent(user, best, number, last_beatmap, low_detail):
 
     difficulty_settings = play_info_s + '\n\n' + map_text
 
-    return play_info, title, link, difficulty_settings, user_info_s, user_link, user_pfp, b_id
+    return play_info, title, link, difficulty_settings, user_info_s, user_link, user_pfp, b_id, s_id

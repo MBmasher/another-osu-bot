@@ -69,7 +69,7 @@ async def spectate_recent():
             await client.edit_message(message, "Timeout (1 hour): Stopped spectating {}.".format(user))
         else:
             new_list.append((message, user, time_))
-            play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
+            play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
                 user, 0, 1, 0, False)
             if play_list != 5:
                 if len(play_list[0]) <= 1:
@@ -77,6 +77,7 @@ async def spectate_recent():
                 else:
                     emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                     emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                    emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
                     await client.edit_message(message, "Spectating {}...".format(user), embed=emb)
 
     api_in_last_logged += 5 * len(spectating_users)
@@ -90,7 +91,7 @@ async def log():
     if api_peak < api_in_last_logged:
         api_peak = api_in_last_logged
     if logging:
-        log_message_text = "Logging...\n{} continuous API requests in the last 120 seconds.\n(Peak is {})"
+        log_message_text = "Logging...\n{} continuous API requests in the last 120 seconds.\n(Peak is {})".format(api_in_last_logged, api_peak)
         if time.time() > last_api_log_time+120:
             last_api_log_time = time.time()
             if api_in_last_logged > 120:
@@ -140,7 +141,7 @@ async def low_detail_spectate_recent():
             await client.edit_message(message, "Timeout (1 hour): Stopped spectating {}.".format(user))
         else:
             new_list.append((message, user, time_))
-            play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
+            play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
                 user, 0, 1, 0, True)
             if play_list != 5:
                 if len(play_list[0]) <= 1:
@@ -148,6 +149,7 @@ async def low_detail_spectate_recent():
                 else:
                     emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                     emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                    emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
                     await client.edit_message(message, "Spectating {}... (Low detail)".format(user), embed=emb)
 
     api_in_last_logged += 2 * len(low_detail_spectating_users)
@@ -201,11 +203,11 @@ async def on_message(message):
                     number = int(message.content.split(" ")[1])
                     number_bool = True
                 if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
-                    author = "_".join(message.content.split(" ")[1 + number_bool:])
+                    author = " ".join(message.content.split(" ")[1 + number_bool:])
             if number > 49:
                 await client.send_message(message.channel, "Please use a number smaller than 50!")
             else:
-                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
                     author, 0, number, 0, False)
                 if play_list != 5:
                     if len(play_list[0]) <= 1:
@@ -214,6 +216,7 @@ async def on_message(message):
                         last_beatmap = b_id
                         emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                         emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
                         await client.send_message(message.channel, embed=emb)
         except:
             await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
@@ -243,12 +246,12 @@ async def on_message(message):
                     number = int(message.content.split(" ")[1])
                     number_bool = True
                 if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
-                    author = "_".join(message.content.split(" ")[1 + number_bool:])
+                    author = " ".join(message.content.split(" ")[1 + number_bool:])
 
             if number > 99:
                 await client.send_message(message.channel, "Please use a number smaller than 100!")
             else:
-                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
                     author, 1, number, 0, False)
                 if play_list != 5:
                     if len(play_list[0]) <= 1:
@@ -257,6 +260,7 @@ async def on_message(message):
                         last_beatmap = b_id
                         emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                         emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
                         await client.send_message(message.channel, embed=emb)
         except:
             await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
@@ -272,7 +276,7 @@ async def on_message(message):
             found = False
             for line in lines:
                 space_split = line.split(" ")
-                if space_split[0] == str(user_id):
+                if space_split[0].lower() == str(user_id).lower():
                     author = " ".join(space_split[1:])
                     found = True
                     break
@@ -286,12 +290,12 @@ async def on_message(message):
                     number = int(message.content.split(" ")[1])
                     number_bool = True
                 if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
-                    author = "_".join(message.content.split(" ")[1 + number_bool:])
+                    author = " ".join(message.content.split(" ")[1 + number_bool:])
 
             if number > 99:
                 await client.send_message(message.channel, "Please use a number smaller than 100!")
             else:
-                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
                     author, 2,
                     number,
                     last_beatmap, False)
@@ -309,6 +313,7 @@ async def on_message(message):
                     else:
                         emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                         emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
                         await client.send_message(message.channel, embed=emb)
         except:
             await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
@@ -324,7 +329,7 @@ async def on_message(message):
             found = False
             for line in lines:
                 space_split = line.split(" ")
-                if space_split[0] == str(user_id):
+                if space_split[0].lower() == str(user_id).lower():
                     author = " ".join(space_split[1:])
                     found = True
                     break
@@ -338,11 +343,11 @@ async def on_message(message):
                     number = int(message.content.split(" ")[1])
                     number_bool = True
                 if (len(message.content.split(" ")) > 2 and number_bool) or not number_bool:
-                    author = "_".join(message.content.split(" ")[1 + number_bool:])
+                    author = " ".join(message.content.split(" ")[1 + number_bool:])
             if number > 99:
                 await client.send_message(message.channel, "Please use a number smaller than 100!")
             else:
-                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id = recent.return_recent(
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
                     author, 3,
                     number, 0, False)
                 if play_list != 5:
@@ -352,6 +357,7 @@ async def on_message(message):
                         last_beatmap = b_id
                         emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
                         emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
                         await client.send_message(message.channel, embed=emb)
         except:
             await client.send_message(message.channel, "<@203322898079809537> you fucked up dumbass")
@@ -422,7 +428,7 @@ async def on_message(message):
                                           ", ".join([i[1] for i in spectating_users]), ", ".join([i[1] for i in low_detail_spectating_users])))
             else:
                 if len(message.content.split(" ")) > 1:
-                    spectate_user = "_".join(message.content.split(" ")[1:-low_detail])
+                    spectate_user = " ".join(message.content.split(" ")[1:-low_detail])
                     low_detail_text = ""
                     if low_detail:
                         low_detail_text = " (Low detail)"
@@ -440,11 +446,11 @@ async def on_message(message):
         new_list = []
         low_detail_new_list = []
         if len(message.content.split(" ")) > 1:
-            spectate_user = "_".join(message.content.split(" ")[1:])
+            spectate_user = " ".join(message.content.split(" ")[1:])
             spectated_user = ""
             user_spectated = False
             for spectate_message, user, time_ in spectating_users:
-                if user == spectate_user:
+                if user.lower() == spectate_user.lower():
                     spectated_user = user
                     await client.edit_message(spectate_message, "Stopped spectating {}.".format(user))
                     user_spectated = True
@@ -452,7 +458,7 @@ async def on_message(message):
                     new_list.append((spectate_message, user, time_))
 
             for spectate_message, user, time_ in low_detail_spectating_users:
-                if user == spectate_user:
+                if user.lower() == spectate_user.lower():
                     spectated_user = user
                     await client.edit_message(spectate_message, "Stopped spectating {}.".format(user))
                     user_spectated = True
