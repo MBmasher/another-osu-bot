@@ -48,10 +48,10 @@ def return_recent(user, best, number, last_beatmap, low_detail):
         play_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
 
     if number > len(play_info):
-        return play_info, user, 0, 0, 0, 0, 0, 0
+        return play_info, user, 0, 0, 0, 0, 0, 0, 0
 
     if len(play_info[0]) <= 1:
-        return play_info, user, 0, 0, 0, 0, 0, 0
+        return play_info, user, 0, 0, 0, 0, 0, 0, 0
 
     if best == 3:
         play_info = sorted(play_info, key=get_date, reverse=True)
@@ -198,6 +198,10 @@ def return_recent(user, best, number, last_beatmap, low_detail):
     user_link = "https://osu.ppy.sh/u/{}".format(user)
     user_pfp = ""
 
+    if int(combo) < int(max_combo):
+        fc_pp = calc.return_values(c100, c50, 0, max_combo, str(b_id), mods_string)
+        fc_string = " FC {:.2f}pp /".format(fc_pp.pp)
+
     if not low_detail:
         url = 'https://osu.ppy.sh/api/get_user?k={}&u={}'.format(key, user)
         jsonurl = str(requests.get(url).text)
@@ -217,10 +221,6 @@ def return_recent(user, best, number, last_beatmap, low_detail):
 
         if grade == "F":
             grade += " ({:.2f}% completion)".format(100 * ((int(c50) + int(c100) + int(c300) + int(misses)) / objects))
-
-        if int(combo) < int(max_combo):
-            fc_pp = calc.return_values(c100, c50, 0, max_combo, str(b_id), mods_string)
-            fc_string = " FC {:.2f}pp /".format(fc_pp.pp)
 
         if best == 1 or best == 3:
             final_pp = float(play_info[number-1][14+index_adjust][1])
