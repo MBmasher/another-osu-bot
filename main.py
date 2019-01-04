@@ -83,8 +83,11 @@ async def spectate_recent():
     api_in_last_logged += 5 * len(spectating_users)
 
     spectating_users = new_list
-    await asyncio.sleep(int(60 / (30 / (max(len(spectating_users), 1)*5))) + 10)
-    await spectate_recent()
+
+async def spectate_recent_loop():
+    while True:
+        await asyncio.sleep(int(60 / (30 / (max(len(spectating_users), 1) * 5))) + 10)
+        await spectate_recent()
 
 async def log():
     global logging, logging_message, logging_channel, api_in_last_logged, api_peak, last_api_log_time
@@ -128,8 +131,11 @@ async def log():
                                                                                                             datetime.utcfromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 
         await client.edit_message(logging_message, log_message_text)
-    await asyncio.sleep(5)
-    await log()
+
+async def log_loop():
+    while True:
+        await asyncio.sleep(5)
+        await log()
 
 async def low_detail_spectate_recent():
     global low_detail_spectating_users, api_in_last_logged
@@ -155,8 +161,11 @@ async def low_detail_spectate_recent():
     api_in_last_logged += 2 * len(low_detail_spectating_users)
 
     low_detail_spectating_users = new_list
-    await asyncio.sleep(int(60 / (30 / (max(len(low_detail_spectating_users), 1)*2))) + 5)
-    await low_detail_spectate_recent()
+
+async def low_detail_spectate_recent_loop():
+    while True:
+        await asyncio.sleep(int(60 / (30 / (max(len(spectating_users), 1) * 2))) + 10)
+        await spectate_recent()
 
 def stop():
     task.cancel()
@@ -511,9 +520,9 @@ async def on_ready():
 async def main():
     tasks = [
         client.start(TOKEN),
-        spectate_recent(),
-        low_detail_spectate_recent(),
-        log()
+        spectate_recent_loop(),
+        low_detail_spectate_recent_loop(),
+        log_loop()
     ]
 
     while len(tasks):
