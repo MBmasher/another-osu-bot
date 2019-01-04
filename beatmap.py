@@ -234,7 +234,7 @@ class Beatmap:
                 raise ()
         except:
             print("ERROR: Processing beatmap failed")
-            sys.exit(1)
+            return
 
     def apply_mods(self, mods):
         # Ugly shouldput somewhere else
