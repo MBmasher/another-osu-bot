@@ -47,11 +47,16 @@ fin.seek(0)
 fin.write("[osu]\napi_key = {}".format(key))
 fin.close()
 
-logging = True
 logging_message = None
-logging_channel = client.get_channel(530513525429370893)
 last_api_log_time = time.time()
 on_time = time.time()
+
+if client.get_channel(530513525429370893) is None:
+    logging = False
+    logging_channel = None
+else:
+    logging = True
+    logging_channel = client.get_channel(530513525429370893)
 
 api_in_last_logged = 0
 api_peak = 0
