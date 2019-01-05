@@ -51,12 +51,12 @@ logging_message = None
 last_api_log_time = time.time()
 on_time = time.time()
 
-if client.get_channel(530513525429370893) is None:
+if client.get_channel("530513525429370893") is None:
     logging = False
     logging_channel = None
 else:
     logging = True
-    logging_channel = client.get_channel(530513525429370893)
+    logging_channel = client.get_channel("530513525429370893")
 
 api_in_last_logged = 0
 api_peak = 0
