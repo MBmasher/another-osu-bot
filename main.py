@@ -33,6 +33,7 @@ class Periodic:
             await asyncio.sleep(self.time)
             self.func()
 
+client = discord.Client()
 
 key = os.environ.get('API_KEY')
 TOKEN = os.environ.get('TOKEN')
@@ -46,43 +47,44 @@ fin.seek(0)
 fin.write("[osu]\napi_key = {}".format(key))
 fin.close()
 
-logging = False
+logging = True
 logging_message = None
-logging_channel = None
+logging_channel = client.get_channel(530513525429370893)
 last_api_log_time = time.time()
 on_time = time.time()
 
 api_in_last_logged = 0
 api_peak = 0
 
-client = discord.Client()
-
 last_beatmap = 0
 
 async def spectate_recent():
-    global spectating_users, api_in_last_logged
+    global spectating_users, api_in_last_logged, logging_channel
 
-    new_list = []
+    try:
+        new_list = []
 
-    for message, user, time_ in spectating_users:
-        if (time.time() > time_ + 3600):
-            await client.edit_message(message, "Timeout (1 hour): Stopped spectating {}.".format(user))
-        else:
-            new_list.append((message, user, time_))
-            play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
-                user, 0, 1, 0, False)
-            if play_list != 5:
-                if len(play_list[0]) <= 1:
-                    await client.edit_message(message, "Spectating {}...\n{} has no recent plays!".format(user, user))
-                else:
-                    emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
-                    emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
-                    emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
-                    await client.edit_message(message, "Spectating {}...".format(user), embed=emb)
+        for message, user, time_ in spectating_users:
+            if (time.time() > time_ + 3600):
+                await client.edit_message(message, "Timeout (1 hour): Stopped spectating {}.".format(user))
+            else:
+                new_list.append((message, user, time_))
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
+                    user, 0, 1, 0, False)
+                if play_list != 5:
+                    if len(play_list[0]) <= 1:
+                        await client.edit_message(message, "Spectating {}...\n{} has no recent plays!".format(user, user))
+                    else:
+                        emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
+                        emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
+                        await client.edit_message(message, "Spectating {}...".format(user), embed=emb)
 
-    api_in_last_logged += 5 * len(spectating_users)
+        api_in_last_logged += 5 * len(spectating_users)
 
-    spectating_users = new_list
+        spectating_users = new_list
+    except:
+        await client.send_message(logging_channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
 
 async def spectate_recent_loop():
     while True:
@@ -91,46 +93,49 @@ async def spectate_recent_loop():
 
 async def log():
     global logging, logging_message, logging_channel, api_in_last_logged, api_peak, last_api_log_time
-    if api_peak < api_in_last_logged:
-        api_peak = api_in_last_logged
-    if logging:
-        log_message_text = "Logging...\n{} continuous API requests in the last 120 seconds.\n(Peak is {})".format(api_in_last_logged, api_peak)
-        if time.time() > last_api_log_time+120:
-            last_api_log_time = time.time()
-            if api_in_last_logged > 120:
-                await client.send_message(logging_channel, "<@203322898079809537> There have been over 100 continuous API requests in the last 120 seconds. Shutting down.")
-                sys.exit(1)
-            api_in_last_logged = 0
-        now = int(time.time())
-        d = divmod(now - on_time, 86400)  # days
-        h = divmod(d[1], 3600)  # hours
-        m = divmod(h[1], 60)  # minutes
-        s = m[1]  # seconds
-        time_ago = ""
-        if d[0] > 0:
-            if int(d[0]) == 1:
-                time_ago += "1 day, "
+    try:
+        if api_peak < api_in_last_logged:
+            api_peak = api_in_last_logged
+        if logging:
+            log_message_text = "Logging...\n{} continuous API requests in the last 120 seconds.\n(Peak is {})".format(api_in_last_logged, api_peak)
+            if time.time() > last_api_log_time+120:
+                last_api_log_time = time.time()
+                if api_in_last_logged > 120:
+                    await client.send_message(logging_channel, "<@203322898079809537> There have been over 100 continuous API requests in the last 120 seconds. Shutting down.")
+                    sys.exit(1)
+                api_in_last_logged = 0
+            now = int(time.time())
+            d = divmod(now - on_time, 86400)  # days
+            h = divmod(d[1], 3600)  # hours
+            m = divmod(h[1], 60)  # minutes
+            s = m[1]  # seconds
+            time_ago = ""
+            if d[0] > 0:
+                if int(d[0]) == 1:
+                    time_ago += "1 day, "
+                else:
+                    time_ago += "{} days, ".format(int(d[0]))
+            if h[0] > 0:
+                if int(h[0]) == 1:
+                    time_ago += "1 hour, "
+                else:
+                    time_ago += "{} hours, ".format(int(h[0]))
+            if m[0] > 0:
+                if int(m[0]) == 1:
+                    time_ago += "1 minute, "
+                else:
+                    time_ago += "{} minutes, ".format(int(m[0]))
+            if int(s) == 1:
+                time_ago += "1 second"
             else:
-                time_ago += "{} days, ".format(int(d[0]))
-        if h[0] > 0:
-            if int(h[0]) == 1:
-                time_ago += "1 hour, "
-            else:
-                time_ago += "{} hours, ".format(int(h[0]))
-        if m[0] > 0:
-            if int(m[0]) == 1:
-                time_ago += "1 minute, "
-            else:
-                time_ago += "{} minutes, ".format(int(m[0]))
-        if int(s) == 1:
-            time_ago += "1 second"
-        else:
-            time_ago += "{} seconds".format(int(s))
-        log_message_text += "\nUptime: {}\nTurned on at {} (UTC time)\nLast updated at {} (UTC time)".format(time_ago,
-                                                                                                            datetime.utcfromtimestamp(on_time).strftime('%Y-%m-%d %H:%M:%S'),
-                                                                                                            datetime.utcfromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+                time_ago += "{} seconds".format(int(s))
+            log_message_text += "\nUptime: {}\nTurned on at {} (UTC time)\nLast updated at {} (UTC time)".format(time_ago,
+                                                                                                                datetime.utcfromtimestamp(on_time).strftime('%Y-%m-%d %H:%M:%S'),
+                                                                                                                datetime.utcfromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 
-        await client.edit_message(logging_message, log_message_text)
+            await client.edit_message(logging_message, log_message_text)
+    except:
+        await client.send_message(logging_channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
 
 async def log_loop():
     while True:
@@ -138,29 +143,32 @@ async def log_loop():
         await log()
 
 async def low_detail_spectate_recent():
-    global low_detail_spectating_users, api_in_last_logged
+    global low_detail_spectating_users, api_in_last_logged, logging_channel
 
-    new_list = []
+    try:
+        new_list = []
 
-    for message, user, time_ in low_detail_spectating_users:
-        if (time.time() > time_ + 3600):
-            await client.edit_message(message, "Timeout (1 hour): Stopped spectating {}.".format(user))
-        else:
-            new_list.append((message, user, time_))
-            play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
-                user, 0, 1, 0, True)
-            if play_list != 5:
-                if len(play_list[0]) <= 1:
-                    await client.edit_message(message, "Spectating {}... (Low detail)\n{} has no recent plays!".format(user, user))
-                else:
-                    emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
-                    emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
-                    emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
-                    await client.edit_message(message, "Spectating {}... (Low detail)".format(user), embed=emb)
+        for message, user, time_ in low_detail_spectating_users:
+            if (time.time() > time_ + 3600):
+                await client.edit_message(message, "Timeout (1 hour): Stopped spectating {}.".format(user))
+            else:
+                new_list.append((message, user, time_))
+                play_list, title_s, link_s, diff_s, user_info_s, user_link, user_pfp, b_id, s_id = recent.return_recent(
+                    user, 0, 1, 0, True)
+                if play_list != 5:
+                    if len(play_list[0]) <= 1:
+                        await client.edit_message(message, "Spectating {}... (Low detail)\n{} has no recent plays!".format(user, user))
+                    else:
+                        emb = discord.Embed(title=title_s, description=diff_s, url=link_s)
+                        emb.set_author(name=user_info_s, url=user_link, icon_url=user_pfp)
+                        emb.set_thumbnail(url="https://b.ppy.sh/thumb/{}l.jpg".format(s_id))
+                        await client.edit_message(message, "Spectating {}... (Low detail)".format(user), embed=emb)
 
-    api_in_last_logged += 2 * len(low_detail_spectating_users)
+        api_in_last_logged += 2 * len(low_detail_spectating_users)
 
-    low_detail_spectating_users = new_list
+        low_detail_spectating_users = new_list
+    except:
+        await client.send_message(logging_channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
 
 async def low_detail_spectate_recent_loop():
     while True:
