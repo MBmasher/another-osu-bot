@@ -83,7 +83,7 @@ async def spectate_recent():
         api_in_last_logged += 5 * len(spectating_users)
 
         spectating_users = new_list
-    except:
+    except Exception as e:
         await client.send_message(logging_channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
 
 async def spectate_recent_loop():
@@ -134,7 +134,7 @@ async def log():
                                                                                                                 datetime.utcfromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 
             await client.edit_message(logging_message, log_message_text)
-    except:
+    except Exception as e:
         await client.send_message(logging_channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
 
 async def log_loop():
@@ -167,7 +167,7 @@ async def low_detail_spectate_recent():
         api_in_last_logged += 2 * len(low_detail_spectating_users)
 
         low_detail_spectating_users = new_list
-    except:
+    except Exception as e:
         await client.send_message(logging_channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
 
 async def low_detail_spectate_recent_loop():
