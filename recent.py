@@ -132,8 +132,8 @@ def return_recent(user, best, number, last_beatmap, low_detail):
     url = 'https://osu.ppy.sh/api/get_beatmaps?k={}&b={}'.format(key, b_id)
     jsonurl = str(requests.get(url).text)
     jsonurl = jsonurl[2:-2]
-    beatmap_split = jsonurl.split(",")
-    beatmap_info = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in beatmap_split]
+    beatmap_split = jsonurl.split("\"")
+    beatmap_info = [(beatmap_split[1+x*4], beatmap_split[3+x*4]) for x in range(int(len(beatmap_split)/4))]
 
     s_id = beatmap_info[0][1]
     song_length = int(int(beatmap_info[3][1])/time_multiplier)
@@ -208,8 +208,8 @@ def return_recent(user, best, number, last_beatmap, low_detail):
         url = 'https://osu.ppy.sh/api/get_user?k={}&u={}'.format(key, user)
         jsonurl = str(requests.get(url).text)
         jsonurl = jsonurl[2:-2]
-        user_split = jsonurl.split(",")
-        user_info = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in user_split]
+        user_split = jsonurl.split("\"")
+        user_info = [(user_split[1+x*4], user_split[3+x*4]) for x in range(int(len(user_split)/4))]
 
         user_id = user_info[0][1]
         user_pfp = "https://a.ppy.sh/{}".format(user_id)
@@ -231,8 +231,8 @@ def return_recent(user, best, number, last_beatmap, low_detail):
         leaderboard_info = []
         for i in range(len(user_split)):
             leaderboard_info.append([])
-            info_list = user_split[i].split(",")
-            leaderboard_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
+            info_list = user_split[i].split("\"")
+            leaderboard_info[i] = [(info_list[1+x*4], info_list[3+x*4]) for x in range(int(len(info_list)/4))]
 
         for i in range(len(leaderboard_info)):
             if leaderboard_info[i][1][1] == str(score) and leaderboard_info[i][2][1] == username:
@@ -248,8 +248,8 @@ def return_recent(user, best, number, last_beatmap, low_detail):
         top_scores_info = []
         for i in range(len(user_split)):
             top_scores_info.append([])
-            info_list = user_split[i].split(",")
-            top_scores_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
+            info_list = user_split[i].split("\"")
+            top_scores_info[i] = [(info_list[1+x*4], info_list[3+x*4]) for x in range(int(len(info_list)/4))]
         for i in range(len(top_scores_info)):
             if top_scores_info[i][1][1] == str(score) and top_scores_info[i][0][1] == str(b_id):
                 top_score_string = " __**#{}**__".format(i + 1)
