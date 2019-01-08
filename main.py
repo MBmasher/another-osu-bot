@@ -216,7 +216,7 @@ async def on_message(message):
                     found = True
                     break
 
-            if not found:
+            if not found and len(message.content.split(" ")) <= 2 and not message.content.split(" ")[-1].isdigit():
                 author = [0]
                 await client.send_message(message.channel, "Link your account using ~link username")
 
@@ -256,7 +256,7 @@ async def on_message(message):
                     found = True
                     break
 
-            if not found:
+            if not found and len(message.content.split(" ")) <= 2 and not message.content.split(" ")[-1].isdigit():
                 author = [0]
                 await client.send_message(message.channel, "Link your account using ~link username")
 
@@ -297,7 +297,7 @@ async def on_message(message):
                     found = True
                     break
 
-            if not found:
+            if not found and len(message.content.split(" ")) <= 2 and not message.content.split(" ")[-1].isdigit():
                 author = [0]
                 await client.send_message(message.channel, "Link your account using ~link username")
 
@@ -347,7 +347,7 @@ async def on_message(message):
                     found = True
                     break
 
-            if not found:
+            if not found and len(message.content.split(" ")) <= 2 and not message.content.split(" ")[-1].isdigit():
                 author = [0]
                 await client.send_message(message.channel, "Link your account using ~link username")
 

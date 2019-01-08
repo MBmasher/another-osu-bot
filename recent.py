@@ -44,8 +44,8 @@ def return_recent(user, best, number, last_beatmap, low_detail):
     play_info = []
     for i in range(len(user_split)):
         play_info.append([])
-        info_list = user_split[i].split(",")
-        play_info[i] = [(x.split(":")[0][1:-1], ":".join(x.split(":")[1:])[1:-1]) for x in info_list]
+        info_list = user_split[i].split("\"")
+        play_info[i] = [(info_list[1+x*4], info_list[3+x*4]) for x in range(int(len(info_list)/4))]
 
     if number > len(play_info):
         return play_info, user, 0, 0, 0, 0, 0, 0, 0
