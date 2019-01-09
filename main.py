@@ -495,29 +495,6 @@ async def on_message(message):
                 logging_message = await client.send_message(message.channel, "Started logging.")
                 logging_channel = message.channel
 
-        if (message.content.startswith('!r') or message.content.startswith('!rb') or message.content.startswith(
-                '!recent')
-                or message.content.startswith('!top') or message.content.startswith(
-                    '!best') or message.content.startswith('!rs') or
-                message.content.startswith('>r') or message.content.startswith('>rb') or message.content.startswith(
-                    '>recent') or message.content.startswith('>top') or message.content.startswith(
-                    '>best') or message.content.startswith('>rs') or message.content.startswith('>roll')
-                or message.content.startswith('!roll')):
-            user_id = message.author.id
-            if str(user_id) == "138585010784436224":
-                await client.send_message(message.channel,
-                                          "fuck you <@138585010784436224>")
-                await client.send_message(message.channel,
-                                          "fuck you <@138585010784436224>")
-                await client.send_message(message.channel,
-                                          "fuck you <@138585010784436224>")
-                await client.send_message(message.channel,
-                                          "fuck you <@138585010784436224>")
-                await client.send_message(message.channel,
-                                          "fuck you <@138585010784436224>")
-            else:
-                await client.send_message(message.channel,
-                                      "I'm online, use me!! (I'm definitely cooler than BoatBot or owo)")
     except Exception as e:
         await client.send_message(message.channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
 
