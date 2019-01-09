@@ -408,7 +408,7 @@ async def on_message(message):
                                                                             number))
 
         if message.content.startswith('~autoroll'):
-            logging = True
+            rolling = True
             roll_number = 100
             if len(message.content.split(" ")) > 1:
                 if message.content.split(" ")[1].isdigit():
