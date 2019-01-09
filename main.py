@@ -187,7 +187,7 @@ async def low_detail_spectate_recent_loop():
 
 async def auto_roll():
     global rolling, roll_number, rolling_channel
-    if rolling and rolling_channel is not none:
+    if rolling and rolling_channel is not None:
         await client.send_message(rolling_channel,
                                   "Autorolling: {} out of {}.".format(user_id, random.randint(1, roll_number),
                                                                       roll_number))
