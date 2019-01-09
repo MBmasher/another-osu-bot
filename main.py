@@ -58,6 +58,10 @@ else:
     logging = True
     logging_channel = client.get_channel("530513525429370893")
 
+rolling = False
+roll_number = 0
+rolling_channel = None
+
 api_in_last_logged = 0
 api_peak = 0
 
@@ -148,7 +152,7 @@ async def log_loop():
         await log()
 
 async def low_detail_spectate_recent():
-    global low_detail_spectating_users, api_in_last_logged, logging_channel
+    global low_detail_spectating_users, api_in_last_logged, logging_channel, rolling, roll_number, rolling_channel
 
     try:
         new_list = []
@@ -180,12 +184,25 @@ async def low_detail_spectate_recent_loop():
         await asyncio.sleep(int(60 / (30 / (max(len(low_detail_spectating_users), 1) * 2))) + 10)
         await low_detail_spectate_recent()
 
+async def auto_roll():
+    global rolling, roll_number, rolling_channel, rolling_message
+    if rolling:
+        await client.send_message(message.channel,
+                                  "Autorolling: {} out of {}.".format(user_id, random.randint(1, roll_number),
+                                                                        number))
+
+async def auto_roll_loop():
+    while True:
+        await asyncio.sleep(1)
+        for i in range(5):
+            await auto_roll()
+
 def stop():
     task.cancel()
 
 @client.event
 async def on_message(message):
-    global last_beatmap, spectating_users, logging_channel, logging_message, logging, low_detail_spectating_users
+    global last_beatmap, spectating_users, logging_channel, logging_message, logging, low_detail_spectating_users, rolling, roll_number, rolling_channel
     # we do not want the bot to reply to itself
     if message.author == client.user:
         return
@@ -389,6 +406,27 @@ async def on_message(message):
                                           "<@{}> rolled a {} out of {}.".format(user_id, random.randint(1, number),
                                                                             number))
 
+        if message.content.startswith('~autoroll'):
+            logging = True
+            roll_number = 100
+            if len(message.content.split(" ")) > 1:
+                if message.content.split(" ")[1].isdigit():
+                    roll_number = int(message.content.split(" ")[1])
+            if rolling_channel is not None:
+                await client.send_message(message.channel, "Autorolling moved to this channel.")
+                rolling_channel = message.channel
+            else:
+                await client.send_message(message.channel, "Started autorolling.")
+                rolling_channel = message.channel
+
+        if message.content.startswith('~unautoroll'):
+            rolling = False
+
+            if rolling_channel is not None:
+                await client.send_message(message.channel, "Stopped autorolling.")
+            else:
+                await client.send_message(message.channel, "Not autorolling.")
+
         if message.content.startswith('~link'):
             name = ""
             if len(message.content.split(" ")) > 1:
@@ -512,7 +550,8 @@ async def main():
         client.start(TOKEN),
         spectate_recent_loop(),
         low_detail_spectate_recent_loop(),
-        log_loop()
+        log_loop(),
+        auto_roll_loop()
     ]
 
     while len(tasks):
