@@ -177,7 +177,8 @@ async def low_detail_spectate_recent():
 
         low_detail_spectating_users = new_list
     except Exception as e:
-        await client.send_message(logging_channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
+        if logging_channel is not None:
+            await client.send_message(logging_channel, "<@203322898079809537> Something's gone wrong\n{}".format(e))
 
 async def low_detail_spectate_recent_loop():
     while True:
