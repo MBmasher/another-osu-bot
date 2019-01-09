@@ -189,7 +189,7 @@ async def auto_roll():
     if rolling:
         await client.send_message(message.channel,
                                   "Autorolling: {} out of {}.".format(user_id, random.randint(1, roll_number),
-                                                                        number))
+                                                                      roll_number))
 
 async def auto_roll_loop():
     while True:
